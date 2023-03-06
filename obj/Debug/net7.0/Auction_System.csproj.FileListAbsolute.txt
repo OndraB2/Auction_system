@@ -1,0 +1,15 @@
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/bin/Debug/net7.0/Auction_System
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/bin/Debug/net7.0/Auction_System.deps.json
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/bin/Debug/net7.0/Auction_System.runtimeconfig.json
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/bin/Debug/net7.0/Auction_System.dll
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/bin/Debug/net7.0/Auction_System.pdb
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.csproj.AssemblyReference.cache
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.GeneratedMSBuildEditorConfig.editorconfig
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.AssemblyInfoInputs.cache
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.AssemblyInfo.cs
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.csproj.CoreCompileInputs.cache
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.dll
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/refint/Auction_System.dll
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.pdb
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/Auction_System.genruntimeconfig.cache
+/home/ondrej.bill/Documents/skola/ERASMUS/c_sharp/Auction_System/obj/Debug/net7.0/ref/Auction_System.dll
