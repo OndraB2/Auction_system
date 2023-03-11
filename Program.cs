@@ -1,5 +1,6 @@
 ﻿using System;
 using BlockChainLedger;
+using Kademlia;
 
 namespace AuctionSystem
 {
@@ -8,7 +9,9 @@ namespace AuctionSystem
     static void Main(string[] args)
     {
       Console.WriteLine("Hello World!");
-      PoWBlockTest();
+      //PoWBlockTest();
+      //P2PWebClientTest();
+      SerializaceTest();
     }
 
 
@@ -28,5 +31,23 @@ namespace AuctionSystem
       }
       Console.WriteLine(blockList.Count);
     }
+
+    static void P2PWebClientTest()
+    {
+      P2PUnit.Instance.Connect();
+      
+      while(true)
+      P2PUnit.Instance.Send();
+    }
+
+    static void SerializaceTest()
+    {
+      Message x = new Ping("123555", 45646);
+      var bytes = x.Serialize();
+      Message x2 = Serializer.Deserialize(bytes);
+      Console.WriteLine(x.GetType());
+      Console.WriteLine(x2.GetType());
+    }
+
   }
 }
