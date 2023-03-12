@@ -2,11 +2,19 @@ namespace Kademlia
 {
     class Store : Message
     {
-        public Store(string senderIp, int senderPort) : base(senderIp, senderPort) {}
+        public Store(int senderId, int destinationId) : base(senderId, destinationId) {}
 
         public override byte[] Serialize()
         {
             return Serializer.Serialize<Store>(this);
+        }
+
+        public override void OnReceive()
+        {
+            if(IsForMe())
+            {
+                Console.WriteLine("Store received");
+            }
         }
     }
 }

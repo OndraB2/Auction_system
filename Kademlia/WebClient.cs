@@ -18,18 +18,16 @@ namespace Kademlia
             this.Port = port;
         }
 
-        public void Send(string ipAddressString, int port, string message)
+        public void Send(string ipAddressString, int port, Message message)
         {
             try
             {
                 // Convert the IP address string to an IPAddress object
                 IPAddress ipAddress = IPAddress.Parse(ipAddressString);
-
                 // Create an IPEndPoint object with the IP address and port
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, port);
-
-                // Convert the message to a byte array
-                byte[] data = Encoding.UTF8.GetBytes(message);
+                
+                byte[] data = message.Serialize();
 
                 // Send the message to the endpoint without establishing a connection
                 this.client.Send(data, data.Length, endPoint);
@@ -52,9 +50,8 @@ namespace Kademlia
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
                     byte[] data = this.client.Receive(ref endPoint);
 
-                    // Convert the received data to a string and display it
-                    string message = Encoding.UTF8.GetString(data);
-                    Console.WriteLine("Received UDP data from {0}: {1}", endPoint.ToString(), message);
+                    Message message = Serializer.Deserialize(data);
+                    new Thread(() => message.OnReceive()).Start();
                 }
             }
             catch (Exception ex)
@@ -63,7 +60,6 @@ namespace Kademlia
             }
             finally
             {
-                // Close the UdpClient object when finished
                 this.client.Close();
             }
         }

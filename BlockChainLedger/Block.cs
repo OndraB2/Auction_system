@@ -1,5 +1,5 @@
 namespace BlockChainLedger{
-    class Block
+    abstract class Block
     {
         public int Rank {get; protected set;}
         public string Hash {get; protected set;}
@@ -29,7 +29,7 @@ namespace BlockChainLedger{
             this.Hash = "";
         }
 
-        public virtual Block ValidateBlock() {return null;}
+        public abstract Block ValidateBlock();
 
         public override string ToString()
         {

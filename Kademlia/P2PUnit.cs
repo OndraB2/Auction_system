@@ -6,7 +6,7 @@ namespace Kademlia
 {
     class P2PUnit{
         //private ... RoutingTable;
-        private int Guid;
+        public int Id { get; private set;}
         private string IpAddress;
         private int Port;
 
@@ -37,6 +37,8 @@ namespace Kademlia
         public bool Connect()
         {
             // autentizace, pripojeni k centralnimu prvku, obdrzeni a ulozeni routing table, zrizeni listeneru na zpravy v novem vlakne
+            
+            Id = 1;
 
             Listener = new Thread(new ThreadStart(Client.Listen));
             Listener.Start();
@@ -46,9 +48,16 @@ namespace Kademlia
             return IsConnected;
         }
 
-        public void Send()
+        public void Send(Message message)
         {
-            Client.Send(Console.ReadLine(), Convert.ToInt32(Console.ReadLine()), "Pokus");
+            // vypocist na jakou ip dle id v message
+
+            Client.Send(Console.ReadLine(), Convert.ToInt32(Console.ReadLine()), message);
+        }
+
+        public void Redirect(Message message)
+        {
+            //Console.WriteLine(message.GetType());
         }
     }
 }

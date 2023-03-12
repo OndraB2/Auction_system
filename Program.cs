@@ -10,8 +10,8 @@ namespace AuctionSystem
     {
       Console.WriteLine("Hello World!");
       //PoWBlockTest();
-      //P2PWebClientTest();
-      SerializaceTest();
+      P2PWebClientTest();
+      //SerializaceTest();
     }
 
 
@@ -35,14 +35,15 @@ namespace AuctionSystem
     static void P2PWebClientTest()
     {
       P2PUnit.Instance.Connect();
+      Message m = new Ping(1,1);
       
       while(true)
-      P2PUnit.Instance.Send();
+      P2PUnit.Instance.Send(m);
     }
 
     static void SerializaceTest()
     {
-      Message x = new Ping("123555", 45646);
+      Message x = new Ping(1, 45646);
       var bytes = x.Serialize();
       Message x2 = Serializer.Deserialize(bytes);
       Console.WriteLine(x.GetType());

@@ -22,8 +22,7 @@ namespace Kademlia
             MessageWrapper deserialized  = JsonConvert.DeserializeObject<MessageWrapper>(json);
             
             var messageType = Type.GetType(deserialized.MessageType);
-            var message = JsonConvert.DeserializeObject(
-                Convert.ToString(deserialized.Message), messageType);
+            var message = JsonConvert.DeserializeObject(Convert.ToString(deserialized.Message), messageType);
 
             return message as Message;
         }
