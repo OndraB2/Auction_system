@@ -2,7 +2,7 @@ namespace Kademlia
 {
     class Store : Message
     {
-        public Store(int senderId, int destinationId) : base(senderId, destinationId) {}
+        public Store(KademliaNode senderNode, KademliaNode destinationNode) : base(senderNode, destinationNode) {}
 
         public override byte[] Serialize()
         {

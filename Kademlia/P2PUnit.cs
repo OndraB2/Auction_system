@@ -6,7 +6,7 @@ namespace Kademlia
 {
     class P2PUnit{
         //private ... RoutingTable;
-        public int Id { get; private set;}
+        public KademliaNode NodeId { get; private set;}  // 160 bitu
         private string IpAddress;
         private int Port;
 
@@ -29,16 +29,28 @@ namespace Kademlia
 
         private P2PUnit()
         {
-            IpAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
-            Port = WebClient.GetFreePort();
+            IpAddress = GetIpAddress();
+            Port = GetPort();
             Client = new WebClient(Port);
         }
 
-        public bool Connect()
+        public static string GetIpAddress() => Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
+
+        public static int GetPort() => WebClient.GetFreePort();
+        public bool Connect(bool isBootstrapNode = false)
         {
             // autentizace, pripojeni k centralnimu prvku, obdrzeni a ulozeni routing table, zrizeni listeneru na zpravy v novem vlakne
             
-            Id = 1;
+            
+            if(!isBootstrapNode)
+            {
+                // dotaz na registraci
+                // node dostanu id dostanu po registraci?
+                
+                // byte[] nodeId = new byte[20];
+                // new Random().NextBytes(nodeId);
+                this.NodeId = new KademliaNode(new byte[20], IpAddress, Port);
+            }
 
             Listener = new Thread(new ThreadStart(Client.Listen));
             Listener.Start();

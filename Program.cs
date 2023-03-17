@@ -35,7 +35,9 @@ namespace AuctionSystem
     static void P2PWebClientTest()
     {
       P2PUnit.Instance.Connect();
-      Message m = new Ping(1,1);
+      KademliaNode sender = new KademliaNode(new byte[10], "", 1);
+      KademliaNode destination = new KademliaNode(new byte[10], "", 1);
+      Message m = new Ping(sender,destination);
       
       while(true)
       P2PUnit.Instance.Send(m);
@@ -43,7 +45,9 @@ namespace AuctionSystem
 
     static void SerializaceTest()
     {
-      Message x = new Ping(1, 45646);
+      KademliaNode sender = new KademliaNode(new byte[10], "", 1);
+      KademliaNode destination = new KademliaNode(new byte[10], "", 1);
+      Message x = new Ping(sender, destination);
       var bytes = x.Serialize();
       Message x2 = Serializer.Deserialize(bytes);
       Console.WriteLine(x.GetType());

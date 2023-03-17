@@ -3,15 +3,15 @@ namespace Kademlia
     abstract class Message
     {
         // hlavicka - odesilatel, ..
-        public int senderId;
-        public int destinationId;
+        public KademliaNode senderNode;
+        public KademliaNode destinationNode;
 
         // odesilat jako plaintext nebo nejak serializovat na byty - slo by snadno zpet - poznalo by jaky je datovy typ?
 
-        public Message(int senderIp, int destinationId)
+        public Message(KademliaNode senderNode, KademliaNode destinationNode)
         {
-            this.senderId = senderIp;
-            this.destinationId = destinationId;
+            this.senderNode = senderNode;
+            this.destinationNode = destinationNode;
         }
 
         public abstract byte[] Serialize();
@@ -20,7 +20,7 @@ namespace Kademlia
 
         protected bool IsForMe()
         {
-            if(destinationId != P2PUnit.Instance.Id)
+            if(P2PUnit.Instance.NodeId.CompareNodeId(destinationNode))
             {
                 P2PUnit.Instance.Redirect(this);
                 return false;

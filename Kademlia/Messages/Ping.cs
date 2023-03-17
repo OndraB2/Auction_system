@@ -2,7 +2,7 @@ namespace Kademlia
 {
     class Ping : Message
     {
-        public Ping(int senderId, int destinationId) : base(senderId, destinationId) {}
+        public Ping(KademliaNode senderNode, KademliaNode destinationNode) : base(senderNode, destinationNode) {}
 
         public override byte[] Serialize()
         {
