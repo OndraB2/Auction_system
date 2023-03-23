@@ -10,6 +10,14 @@ namespace Kademlia
             IpAddress = ipAddress;
             Port = port;
         }
+
+        public static KademliaNode CreateInstance(string ipAddress, int port)
+        {
+            byte[] id = new byte[20];
+            Random rnd = new Random();
+            rnd.NextBytes(id);
+            return new KademliaNode(id, ipAddress, port);
+        }
         
         public bool CompareNodeId(KademliaNode node)
         {
@@ -37,6 +45,19 @@ namespace Kademlia
                     return -1;
             }
             return 0;
+        }
+    }
+    public class ByteListComparer : IComparer<IList<byte>>  // https://stackoverflow.com/questions/30422655/sorting-list-of-list-of-bytes-or-list-of-byte-arrays
+    {
+        public int Compare(IList<byte> x, IList<byte> y)
+        {
+            int result;
+            for(int index = 0; index<Math.Min(x.Count, y.Count); index++)
+            {
+                result = x[index].CompareTo(y[index]);
+                if (result != 0) return result;
+            }
+            return x.Count.CompareTo(y.Count);
         }
     }
 }

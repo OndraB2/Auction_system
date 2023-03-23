@@ -10,8 +10,9 @@ namespace AuctionSystem
     {
       Console.WriteLine("Hello World!");
       //PoWBlockTest();
-      P2PWebClientTest();
+      //P2PWebClientTest();
       //SerializaceTest();
+      RoutingTableTest();
     }
 
 
@@ -34,7 +35,7 @@ namespace AuctionSystem
 
     static void P2PWebClientTest()
     {
-      P2PUnit.Instance.Connect();
+      P2PUnit.Instance.Connect(KademliaNode.CreateInstance("",1));
       KademliaNode sender = new KademliaNode(new byte[10], "", 1);
       KademliaNode destination = new KademliaNode(new byte[10], "", 1);
       Message m = new Ping(sender,destination);
@@ -54,5 +55,11 @@ namespace AuctionSystem
       Console.WriteLine(x2.GetType());
     }
 
+    static void RoutingTableTest()
+    {
+      BootstrapNode node = new BootstrapNode();
+      node.Start();
+
+    }
   }
 }

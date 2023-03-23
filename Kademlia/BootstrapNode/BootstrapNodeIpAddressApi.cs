@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 
-namespace BootstrapNode
+namespace Kademlia
 {
     public class BootstrapNodeIpAddressApi
     {
-        public static string GetBootstrapIpAddress()
+        public static (string, int) GetBootstrapIpAddress()
         {
             using var client = new HttpClient();
             var task = Task.Run(() => client.GetStringAsync("https://bootstrapnodeipaddressapi.azurewebsites.net/getNodeAddress"));
@@ -17,12 +17,13 @@ namespace BootstrapNode
             string ipaddr = task.Result.Substring(task.Result.IndexOf("\"ipAddress\":\"")+"\"ipAddress\":\"".Length);
             ipaddr = ipaddr.Substring(0,ipaddr.IndexOf('\"'));
 
-            return ipaddr;
+            var arr = ipaddr.Split(":");
+            return (arr[0], Convert.ToInt32(arr[1]));
         }
 
-        public static void SetBootstrapNodeIpAdress(string ipAddress)
+        public static void SetBootstrapNodeIpAdress(string ipAddress, int port)
         {
-            var task = Task.Run(() => SendIpToBootstrapAPIAsync(ipAddress));
+            var task = Task.Run(() => SendIpToBootstrapAPIAsync(ipAddress + ":" + port));
             task.Wait();
         }
 

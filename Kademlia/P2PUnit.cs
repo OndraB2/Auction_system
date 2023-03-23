@@ -37,20 +37,11 @@ namespace Kademlia
         public static string GetIpAddress() => Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
 
         public static int GetPort() => WebClient.GetFreePort();
-        public bool Connect(bool isBootstrapNode = false)
+        public bool Connect(KademliaNode localNode)
         {
             // autentizace, pripojeni k centralnimu prvku, obdrzeni a ulozeni routing table, zrizeni listeneru na zpravy v novem vlakne
             
-            
-            if(!isBootstrapNode)
-            {
-                // dotaz na registraci
-                // node dostanu id dostanu po registraci?
-                
-                // byte[] nodeId = new byte[20];
-                // new Random().NextBytes(nodeId);
-                this.NodeId = new KademliaNode(new byte[20], IpAddress, Port);
-            }
+            this.NodeId = localNode;
 
             Listener = new Thread(new ThreadStart(Client.Listen));
             Listener.Start();
