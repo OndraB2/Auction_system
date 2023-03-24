@@ -5,19 +5,17 @@ namespace AuctionSystem
     class ApplicationNode
     {
         protected KademliaNode localNode;
-        protected RoutingTable routingTable;
-
+        
         public ApplicationNode()
         {
-            string ipAddress = P2PUnit.GetIpAddress();
-            int port = P2PUnit.GetPort();
+            string ipAddress = P2PUnit.Instance.IpAddress;
+            int port = P2PUnit.Instance.Port;
             localNode = KademliaNode.CreateInstance(ipAddress, port);
-            routingTable = new RoutingTable(localNode);
         }
 
         public virtual void Start()
         {
-            P2PUnit.Instance.Connect(this.localNode);
+            P2PUnit.Instance.Start();
         }
 
 

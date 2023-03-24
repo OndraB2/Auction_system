@@ -13,6 +13,7 @@ namespace Kademlia
         public override void OnReceive()
         {
             // cant test if is for me - it is message for bootstrap node while dont know his id
+            Console.WriteLine("connect received");
             OnReceiveRegistrations?.Invoke(this, new EventArgs());
         }
     }

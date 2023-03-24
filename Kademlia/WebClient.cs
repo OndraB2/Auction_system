@@ -31,6 +31,8 @@ namespace Kademlia
 
                 // Send the message to the endpoint without establishing a connection
                 this.client.Send(data, data.Length, endPoint);
+
+                Console.WriteLine($"send message to {ipAddressString}:{port}");
             }
             catch (Exception ex)
             {

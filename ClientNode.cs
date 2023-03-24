@@ -11,24 +11,22 @@ namespace AuctionSystem
         {
             base.Start();
 
-            string bootstrapIp;
-            int port;
-            (bootstrapIp, port) = BootstrapNodeIpAddressApi.GetBootstrapIpAddress();
+            FindNode.OnReceiveRegistrations += FineNodeReceived;
 
-            // registrace k prijeti RoutingTableResponse
-            RoutingTableResponse.OnReceiveRegistrations += RoutingTableReceived;
-
-            KademliaNode bootstrapNode = new KademliaNode(new byte[20], bootstrapIp, port);
-            Connect connect = new Connect(this.localNode, bootstrapNode);
-            P2PUnit.Instance.Send(connect);
+            P2PUnit.Instance.ConnectToBootstrapNode(this.localNode);
         }
 
-        private void RoutingTableReceived(object ?sender, EventArgs args)
+        private void FineNodeReceived(object ?sender, EventArgs args)  // RoutingTableReceived
         {
-            if(sender != null && sender is RoutingTableResponse)
+            if(sender != null && sender is FindNode)
             {
-                RoutingTableResponse r = sender as RoutingTableResponse;
-                this.routingTable.AddNode(r.neighbours);
+                FindNode r = sender as FindNode;
+                P2PUnit.Instance.RoutingTable.AddNode(r.Neighbours);
+                Console.WriteLine("FindNode recived, content:");
+                foreach(var n in r.Neighbours)
+                {
+                    Console.WriteLine(n);
+                }
             }
         }
     }

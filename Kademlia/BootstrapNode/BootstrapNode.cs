@@ -37,9 +37,11 @@ namespace Kademlia
             BootstrapNodeIpAddressApi.SetBootstrapNodeIpAdress(localNode.IpAddress, localNode.Port);
         }
 
-        private List<KademliaNode> GetClosestNeighbors(KademliaNode node)
+        private List<KademliaNode> GetClosestNeighbours(KademliaNode node)
         {
-            return routingTable.GetClosestNodes(node, NumbetOfNeighbors);
+            var neighbours = P2PUnit.Instance.RoutingTable.GetClosestNodes(node, NumbetOfNeighbors+1);
+            neighbours.Remove(node);
+            return neighbours;
         }
 
         private void NewClientConnected(object ?sender, EventArgs args)
@@ -48,12 +50,19 @@ namespace Kademlia
             if(sender != null && sender is Connect)
             {
                 Connect connect = sender as Connect;
-                routingTable.AddNode(connect.senderNode);
+                Console.WriteLine($"New Connection {connect.senderNode}");
+                P2PUnit.Instance.RoutingTable.AddNode(connect.senderNode);
 
-                List<KademliaNode> neighbors = GetClosestNeighbors(connect.senderNode);
+                List<KademliaNode> neighbours = GetClosestNeighbours(connect.senderNode);
                 // send back
-                RoutingTableResponse response = new RoutingTableResponse(this.localNode, connect.senderNode);
+                FindNode response = MessageFactory.GetFindNodeResponse(this.localNode, connect.senderNode, connect.senderNode, neighbours);
                 P2PUnit.Instance.Send(response);
+
+                Console.WriteLine("Sending, content:");
+                foreach(var n in response.Neighbours)
+                {
+                    Console.WriteLine(n);
+                }
             }
         }
     }

@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Kademlia
 {
     public class KademliaNode : IComparable{
@@ -46,7 +48,26 @@ namespace Kademlia
             }
             return 0;
         }
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            foreach(var b in NodeId)
+            {
+                builder.Append(b);
+                builder.Append('.');
+            }
+            builder.Append(" - ");
+            builder.Append(IpAddress);
+            builder.Append(":");
+            builder.Append(Port);
+            return builder.ToString();
+        }
     }
+
+
+
+
     public class ByteListComparer : IComparer<IList<byte>>  // https://stackoverflow.com/questions/30422655/sorting-list-of-list-of-bytes-or-list-of-byte-arrays
     {
         public int Compare(IList<byte> x, IList<byte> y)

@@ -17,6 +17,7 @@ namespace Kademlia
             {
                 buckets[i] = new List<KademliaNode>();
             }
+            AddNode(localNode);
         }
 
         public void AddNode(List<KademliaNode> nodes)
@@ -29,10 +30,13 @@ namespace Kademlia
         public void AddNode(KademliaNode node)
         {
             int distanceLevel = GetDistanceLevel(node);
-            if(buckets[distanceLevel].Count >= BucketSize)
-                buckets[distanceLevel].Add(node);
-            else
-                throw new Exception($"Bucket {distanceLevel} is full");
+            if(distanceLevel >= 0 && distanceLevel < NumLevels)
+            {
+                if(buckets[distanceLevel].Count <= BucketSize)
+                    buckets[distanceLevel].Add(node);
+                else
+                    throw new Exception($"Bucket {distanceLevel} is full");
+            }
         }
 
         public void RemoveNode(KademliaNode node)
@@ -57,6 +61,8 @@ namespace Kademlia
                     break;
                 }
             }
+            if(i==NumLevels)
+                i--;
             return NumLevels - 1 - i;
         }
 
@@ -66,9 +72,9 @@ namespace Kademlia
             int distanceLevel = GetDistanceLevel(node);
             closestNodes.AddRange(buckets[distanceLevel]);
             int i = 1;
-            while((closestNodes.Count < numberOfNodes + 1) && i < NumLevels)
+            while((closestNodes.Count < numberOfNodes) && i < NumLevels)
             {
-                if(distanceLevel - i > 0)
+                if(distanceLevel - i >= 0)
                 {
                     closestNodes.AddRange(buckets[distanceLevel - i]);
                 }
@@ -78,8 +84,17 @@ namespace Kademlia
                 }
                 i++;
             }
-            closestNodes.Remove(node);
             return closestNodes.OrderBy(x => x.CalculateXorDistance(node), new ByteListComparer()).Take(numberOfNodes).ToList();
+        }
+
+        public List<KademliaNode> GetNodeOrClosestNodes(KademliaNode node, int numberOfNodes)
+        {
+            var nodes = this.GetClosestNodes(node, numberOfNodes);
+            if(nodes[0] == node)  // if is node address is closest node on position 0
+            {
+                return new List<KademliaNode>(){nodes[0]};
+            }
+            return nodes;
         }
     }
 }

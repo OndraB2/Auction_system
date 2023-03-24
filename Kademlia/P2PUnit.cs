@@ -7,14 +7,15 @@ namespace Kademlia
     class P2PUnit{
         //private ... RoutingTable;
         public KademliaNode NodeId { get; private set;}  // 160 bitu
-        private string IpAddress;
-        private int Port;
+        public RoutingTable RoutingTable;
+        public string IpAddress {get; private set;}
+        public int Port {get; private set;}
 
         private bool IsConnected = false;
 
-        private WebClient Client;
+        private WebClient client;
 
-        private Thread Listener;
+        private Thread ?listener;
 
         private static P2PUnit? instance = null;
         public static P2PUnit Instance {
@@ -31,36 +32,46 @@ namespace Kademlia
         {
             IpAddress = GetIpAddress();
             Port = GetPort();
-            Client = new WebClient(Port);
+            client = new WebClient(Port);
+            this.NodeId = KademliaNode.CreateInstance(IpAddress, Port);
+            RoutingTable = new RoutingTable(this.NodeId);
         }
 
-        public static string GetIpAddress() => Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
+        private string GetIpAddress() => Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
 
-        public static int GetPort() => WebClient.GetFreePort();
-        public bool Connect(KademliaNode localNode)
+        private int GetPort() => WebClient.GetFreePort();
+        public void Start()
         {
-            // autentizace, pripojeni k centralnimu prvku, obdrzeni a ulozeni routing table, zrizeni listeneru na zpravy v novem vlakne
-            
-            this.NodeId = localNode;
-
-            Listener = new Thread(new ThreadStart(Client.Listen));
-            Listener.Start();
+            listener = new Thread(new ThreadStart(client.Listen));
+            listener.Start();
             Console.WriteLine(IpAddress);
             Console.WriteLine(Port);
-            IsConnected = true;
-            return IsConnected;
         }
 
         public void Send(Message message)
         {
-            // vypocist na jakou ip dle id v message
+            // find best options where send and send
+            var destinations = this.RoutingTable.GetNodeOrClosestNodes(message.destinationNode, 3);
+            foreach(var destination in destinations)
+            {
+                client.Send(destination.IpAddress, destination.Port, message);
+            }
+        }
 
-            Client.Send(Console.ReadLine(), Convert.ToInt32(Console.ReadLine()), message);
+        public void ConnectToBootstrapNode(KademliaNode localNode)
+        {
+            string bootstrapIp;
+            int port;
+            (bootstrapIp, port) = BootstrapNodeIpAddressApi.GetBootstrapIpAddress();
+            KademliaNode bootstrapNode = new KademliaNode(new byte[20], bootstrapIp, port);
+            Connect connect = new Connect(localNode, bootstrapNode);
+            client.Send(bootstrapIp, port, connect);
+            // posle se????
         }
 
         public void Redirect(Message message)
         {
-            //Console.WriteLine(message.GetType());
+            Send(message);
         }
     }
 }

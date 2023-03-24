@@ -6,13 +6,42 @@ namespace AuctionSystem
 {
   class Program
   {
+    //static ManualResetEvent _quitEvent = new ManualResetEvent(false);
     static void Main(string[] args)
     {
+      // Console.CancelKeyPress += (sender, eArgs) => {
+      //   _quitEvent.Set();
+      //   eArgs.Cancel = true;
+      // };
+      // _quitEvent.WaitOne();
+      string mode = "";
+      if(args.Length>1)
+        mode = args[1];
+      else if(args.Length>0)
+        mode = args[0];
+      if(mode != "")
+      {
+        Console.WriteLine($"Running {mode}");
+        if(mode=="BootstrapNode")
+        {
+          BootstrapNode node = new BootstrapNode();
+          node.Start();
+        }
+        else if(mode=="Client")
+        {
+          ClientNode node = new ClientNode();
+          node.Start();
+        }
+      }
+      else
+      {
       Console.WriteLine("Hello World!");
       //PoWBlockTest();
       //P2PWebClientTest();
       //SerializaceTest();
-      RoutingTableTest();
+        RoutingTableTest();
+      }
+      Console.ReadLine();
     }
 
 
@@ -35,7 +64,7 @@ namespace AuctionSystem
 
     static void P2PWebClientTest()
     {
-      P2PUnit.Instance.Connect(KademliaNode.CreateInstance("",1));
+      P2PUnit.Instance.Start();
       KademliaNode sender = new KademliaNode(new byte[10], "", 1);
       KademliaNode destination = new KademliaNode(new byte[10], "", 1);
       Message m = new Ping(sender,destination);
@@ -59,7 +88,6 @@ namespace AuctionSystem
     {
       BootstrapNode node = new BootstrapNode();
       node.Start();
-
     }
   }
 }
