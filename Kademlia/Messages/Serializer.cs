@@ -9,6 +9,8 @@ namespace Kademlia
         {
             MessageWrapper<T> wrapper = new MessageWrapper<T>();
             wrapper.Message = message; 
+            wrapper.DestinationNode = (message as Message).DestinationNode;
+            wrapper.SenderNode = (message as Message).SenderNode;
             string json = JsonConvert.SerializeObject(wrapper, Formatting.None, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
@@ -16,15 +18,35 @@ namespace Kademlia
             return Encoding.UTF8.GetBytes(json);
         }
 
-        public static Message Deserialize(byte[] bytes)
+        public static byte[] Serialize(MessageWrapper wrapper)
+        {
+            string json = JsonConvert.SerializeObject(wrapper, Formatting.None, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            });
+            return Encoding.UTF8.GetBytes(json);
+        }
+
+        public static Message Deserialize(MessageWrapper wrapper)
+        {
+            //string json = Encoding.UTF8.GetString(bytes);
+            //MessageWrapper deserialized  = JsonConvert.DeserializeObject<MessageWrapper>(json);
+            
+            var messageType = Type.GetType(wrapper.MessageType);
+            var message = JsonConvert.DeserializeObject(Convert.ToString(wrapper.Message), messageType);
+
+            return message as Message;
+        }
+
+        public static MessageWrapper Deserialize(byte[] bytes)
         {
             string json = Encoding.UTF8.GetString(bytes);
             MessageWrapper deserialized  = JsonConvert.DeserializeObject<MessageWrapper>(json);
-            
-            var messageType = Type.GetType(deserialized.MessageType);
-            var message = JsonConvert.DeserializeObject(Convert.ToString(deserialized.Message), messageType);
+            return deserialized;
+            // var messageType = Type.GetType(deserialized.MessageType);
+            // var message = JsonConvert.DeserializeObject(Convert.ToString(deserialized.Message), messageType);
 
-            return message as Message;
+            // return message as Message;
         }
     }
 }

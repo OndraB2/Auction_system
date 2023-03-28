@@ -31,10 +31,7 @@ namespace Kademlia
 
         public override void OnReceive()
         {
-            if(IsForMe())
-            {
-                OnReceiveRegistrations?.Invoke(this, new EventArgs());
-            }
+            OnReceiveRegistrations?.Invoke(this, new EventArgs());
         }
     }
 }

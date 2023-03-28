@@ -79,7 +79,7 @@ namespace AuctionSystem
       KademliaNode destination = new KademliaNode(new byte[10], "", 1);
       Message x = new Ping(sender, destination);
       var bytes = x.Serialize();
-      Message x2 = Serializer.Deserialize(bytes);
+      Message x2 = Serializer.Deserialize(Serializer.Deserialize(bytes));
       Console.WriteLine(x.GetType());
       Console.WriteLine(x2.GetType());
     }

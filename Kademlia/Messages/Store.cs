@@ -11,10 +11,7 @@ namespace Kademlia
 
         public override void OnReceive()
         {
-            if(IsForMe())
-            {
-                Console.WriteLine("Store received");
-            }
+            Console.WriteLine("Store received");
         }
     }
 }

@@ -51,10 +51,20 @@ namespace Kademlia
         public void Send(Message message)
         {
             // find best options where send and send
-            var destinations = this.RoutingTable.GetNodeOrClosestNodes(message.destinationNode, 3);
+            var destinations = this.RoutingTable.GetNodeOrClosestNodes(message.DestinationNode, 3);
             foreach(var destination in destinations)
             {
                 client.Send(destination.IpAddress, destination.Port, message);
+            }
+        }
+
+        public void Send(MessageWrapper wrapper)
+        {
+            // find best options where send and send
+            var destinations = this.RoutingTable.GetNodeOrClosestNodes(wrapper.DestinationNode, 3);
+            foreach(var destination in destinations)
+            {
+                client.Send(destination.IpAddress, destination.Port, wrapper);
             }
         }
 
@@ -69,9 +79,9 @@ namespace Kademlia
             // posle se????
         }
 
-        public void Redirect(Message message)
+        public void Redirect(MessageWrapper wrapper)
         {
-            Send(message);
+            Send(wrapper);
         }
     }
 }

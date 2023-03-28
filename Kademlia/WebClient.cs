@@ -20,14 +20,24 @@ namespace Kademlia
 
         public void Send(string ipAddressString, int port, Message message)
         {
+            byte[] data = message.Serialize();
+            Send(ipAddressString, port, data);
+        }
+
+        public void Send(string ipAddressString, int port, MessageWrapper wrapper)
+        {
+            byte[] data = Serializer.Serialize(wrapper);
+            Send(ipAddressString, port, data);
+        }
+
+        public void Send(string ipAddressString, int port, byte[] data)
+        {
             try
             {
                 // Convert the IP address string to an IPAddress object
                 IPAddress ipAddress = IPAddress.Parse(ipAddressString);
                 // Create an IPEndPoint object with the IP address and port
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, port);
-                
-                byte[] data = message.Serialize();
 
                 // Send the message to the endpoint without establishing a connection
                 this.client.Send(data, data.Length, endPoint);
@@ -52,8 +62,13 @@ namespace Kademlia
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
                     byte[] data = this.client.Receive(ref endPoint);
 
-                    Message message = Serializer.Deserialize(data);
-                    new Thread(() => message.OnReceive()).Start();
+                    //Message message = Serializer.Deserialize(data);
+                    MessageWrapper wrapper = Serializer.Deserialize(data);
+                    if(IsForMe(wrapper))
+                    {
+                        Message message = Serializer.Deserialize(wrapper);
+                        new Thread(() => message.OnReceive()).Start();
+                    }
                 }
             }
             catch (Exception ex)
@@ -64,6 +79,16 @@ namespace Kademlia
             {
                 this.client.Close();
             }
+        }
+
+        private bool IsForMe(MessageWrapper wrapper)
+        {
+            if(P2PUnit.Instance.NodeId.CompareNodeId(wrapper.DestinationNode))
+            {
+                P2PUnit.Instance.Redirect(wrapper);
+                return false;
+            }
+            return true;
         }
 
         public static int GetFreePort()

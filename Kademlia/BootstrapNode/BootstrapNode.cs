@@ -50,12 +50,12 @@ namespace Kademlia
             if(sender != null && sender is Connect)
             {
                 Connect connect = sender as Connect;
-                Console.WriteLine($"New Connection {connect.senderNode}");
-                P2PUnit.Instance.RoutingTable.AddNode(connect.senderNode);
+                Console.WriteLine($"New Connection {connect.SenderNode}");
+                P2PUnit.Instance.RoutingTable.AddNode(connect.SenderNode);
 
-                List<KademliaNode> neighbours = GetClosestNeighbours(connect.senderNode);
+                List<KademliaNode> neighbours = GetClosestNeighbours(connect.SenderNode);
                 // send back
-                FindNode response = MessageFactory.GetFindNodeResponse(this.localNode, connect.senderNode, connect.senderNode, neighbours);
+                FindNode response = MessageFactory.GetFindNodeResponse(this.localNode, connect.SenderNode, connect.SenderNode, neighbours);
                 P2PUnit.Instance.Send(response);
 
                 Console.WriteLine("Sending, content:");

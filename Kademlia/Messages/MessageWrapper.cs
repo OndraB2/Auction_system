@@ -10,11 +10,16 @@ namespace Kademlia
     {
         public string MessageType { get { return typeof(T).FullName; } }
         public T Message { get; set; }
+
+        public KademliaNode SenderNode;
+        public KademliaNode DestinationNode;
     }
 
     public class MessageWrapper
     {
         public string MessageType { get; set; }
         public object Message { get; set; }
+        public KademliaNode SenderNode;
+        public KademliaNode DestinationNode;
     }
 } 

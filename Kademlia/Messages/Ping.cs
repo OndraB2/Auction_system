@@ -11,10 +11,7 @@ namespace Kademlia
 
         public override void OnReceive()
         {
-            if(IsForMe())
-            {
-                Console.WriteLine("Ping received");
-            }
+            Console.WriteLine("Ping received");
         }
     }
 }
