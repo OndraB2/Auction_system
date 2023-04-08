@@ -20,12 +20,27 @@ namespace AuctionSystem
         {
             if(sender != null && sender is FindNode)
             {
-                FindNode r = sender as FindNode;
-                P2PUnit.Instance.RoutingTable.AddNode(r.Neighbours);
-                Console.WriteLine("FindNode recived, content:");
-                foreach(var n in r.Neighbours)
+                FindNode findNode = sender as FindNode;
+                if(findNode.Neighbours != null)  // is response with neighbours
                 {
-                    Console.WriteLine(n);
+                    P2PUnit.Instance.RoutingTable.AddNode(findNode.Neighbours);
+                    Console.WriteLine("FindNode response recived, content:");
+                    foreach(var n in findNode.Neighbours)
+                    {
+                        Console.WriteLine(n);
+                    }
+                }
+                else  // is request
+                {
+                    List<KademliaNode> neighbours = P2PUnit.Instance.RoutingTable.GetClosestNodes(findNode.WantedNode, findNode.NumberOfNeighbours);
+                    // send back
+                    FindNode response = MessageFactory.GetFindNodeResponse(findNode, neighbours);
+                    P2PUnit.Instance.Send(response);
+                    Console.WriteLine("FindNode request recived, sending:");
+                    foreach(var n in neighbours)
+                    {
+                        Console.WriteLine(n);
+                    }
                 }
             }
         }
