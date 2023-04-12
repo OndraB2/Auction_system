@@ -4,7 +4,7 @@
 command_to_run="dotnet run ./bin/Debug/net7.0/Auction_System"
 
 # Define the number of instances to run
-num_instances=10
+num_instances=5
 
 # linux
 # Loop through the number of instances and open a new terminal window for each
@@ -21,3 +21,5 @@ for i in $(seq 1 $num_instances)
 do
  cmd.exe /c start "Instance $i" wsl $command_to_run Client
 done
+
+#cmd.exe /c start "Instance $i" wsl $command_to_run Client test1

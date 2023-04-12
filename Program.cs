@@ -35,11 +35,20 @@ namespace AuctionSystem
       }
       else
       {
-      Console.WriteLine("Hello World!");
-      //PoWBlockTest();
-      //P2PWebClientTest();
-      //SerializaceTest();
-        RoutingTableTest();
+      // Console.WriteLine("Hello World!");
+      // //PoWBlockTest();
+      // //P2PWebClientTest();
+      // //SerializaceTest();
+      //   RoutingTableTest();
+        ClientNode node = new ClientNode();
+        node.Start();
+        Block b = new PowBlock(1, "", 3, new List<Transaction>());
+        b.ValidateBlock();
+        node.Store(b);
+        Task.Delay(1000);
+        byte[] id = new byte[20];
+        id = Block.Increment(id);
+        node.FindValue(id);
       }
       Console.ReadLine();
     }

@@ -1,17 +1,22 @@
+using System.Globalization;
+using System.Numerics;
+using System.Text.Json.Serialization;
+
 namespace BlockChainLedger{
-    abstract class Block
+    class Block
     {
-        public int Rank {get; protected set;}
-        public string Hash {get; protected set;}
-        public string HashOfPrevious {get; protected set;}
-        public int Nonce {get; protected set;}
-        public int Difficulty {get; protected set;}
-        public DateTime Timestamp {get; protected set;}
-        public List<Transaction> Transactions {get; protected set;}
+        public byte[] Rank {get; set;} = new byte[20];
+        public string Hash {get; set;}
+        public string HashOfPrevious {get; set;}
+        public int Nonce {get; set;}
+        public int Difficulty {get; set;}
+        public DateTime Timestamp {get; set;}
+        public List<Transaction> Transactions {get; set;}
 
         public Block(int rank, string hashOfPrevious, int difficulty, List<Transaction> transactions)
         {
-            this.Rank = rank;
+            var tt = BitConverter.GetBytes(rank);
+            BitConverter.GetBytes(rank).Reverse().ToArray().CopyTo(this.Rank, 16);
             this.HashOfPrevious = hashOfPrevious;
             this.Difficulty = difficulty;
             this.Transactions = transactions;
@@ -21,7 +26,7 @@ namespace BlockChainLedger{
 
         public Block(Block previousBlock, int difficulty, List<Transaction> transactions)
         {
-            this.Rank = previousBlock.Rank + 1;
+            this.Rank = Increment(previousBlock.Rank);
             this.HashOfPrevious = previousBlock.Hash;
             this.Difficulty = difficulty;
             this.Transactions = transactions;
@@ -29,7 +34,44 @@ namespace BlockChainLedger{
             this.Hash = "";
         }
 
-        public abstract Block ValidateBlock();
+        // [JsonConstructor]
+        // public Block(byte[] Rank, string Hash, string HashOfPrevious, int Nonce, int Difficulty, DateTime Timestamp, List<Transaction> Transactions)
+        // {
+        //     this.Rank = Rank;
+        //     this.Hash = Hash;
+        //     this.HashOfPrevious = HashOfPrevious;
+        //     this.Nonce = Nonce;
+        //     this.Difficulty = Difficulty;
+        //     this.Timestamp = Timestamp;
+        //     this.Transactions = Transactions;
+        // }
+        [JsonConstructor]
+        public Block()
+        {}
+
+        public static byte[] Increment(byte[] arr)
+        {
+            bool carry = true;
+            for (int i = arr.Length - 1; i >= 0; i--)
+            {
+                if (carry)
+                {
+                    carry = false;
+                    if (arr[i] == 0xFF)
+                    {
+                        arr[i] = 0x00;
+                        carry = true;
+                    }
+                    else
+                    {
+                        arr[i]++;
+                    }
+                }
+            }
+            return arr;
+        }
+
+        public virtual Block ValidateBlock() { return this;}
 
         public override string ToString()
         {

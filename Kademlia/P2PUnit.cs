@@ -5,7 +5,6 @@ using System.Threading;
 namespace Kademlia
 {
     class P2PUnit{
-        //private ... RoutingTable;
         public KademliaNode NodeId { get; private set;}  // 160 bitu
         public RoutingTable RoutingTable;
         public string IpAddress {get; private set;}
@@ -48,7 +47,7 @@ namespace Kademlia
             Console.WriteLine(Port);
         }
 
-        public void Send(Message message)
+        public void Send(Message message)   // send to neighbour - if not destination than is redirected
         {
             // find best options where send and send
             var destinations = this.RoutingTable.GetNodeOrClosestNodes(message.DestinationNode, 3);
@@ -68,6 +67,16 @@ namespace Kademlia
             }
         }
 
+        public void SendToClosestNeighbours(Message message, int count)  // send dirrectly to neighbour
+        {
+            var destinations = this.RoutingTable.GetNodeOrClosestNodes(message.DestinationNode, count);
+            foreach(var destination in destinations)
+            {
+                message.DestinationNode = destination;
+                client.Send(destination.IpAddress, destination.Port, message);
+            }
+        }
+
         public void ConnectToBootstrapNode(KademliaNode localNode)
         {
             string bootstrapIp;
@@ -76,7 +85,7 @@ namespace Kademlia
             KademliaNode bootstrapNode = new KademliaNode(new byte[20], bootstrapIp, port);
             Connect connect = new Connect(localNode, bootstrapNode);
             client.Send(bootstrapIp, port, connect);
-            // posle se????
+            
         }
 
         public void Redirect(MessageWrapper wrapper)

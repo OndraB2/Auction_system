@@ -1,3 +1,5 @@
+using BlockChainLedger;
+
 namespace Kademlia
 {
     static class MessageFactory
@@ -32,9 +34,21 @@ namespace Kademlia
             return message;
         }
 
-        public static Store GetStore(KademliaNode senderNode, KademliaNode destinationNode)
+        public static Store GetStore(KademliaNode senderNode, KademliaNode destinationNode, Block block)
         {
-            return new Store(senderNode, destinationNode);
+            return new Store(senderNode, destinationNode, block);
+        }
+
+        public static FindValue GetFindValueRequest(KademliaNode senderNode, KademliaNode destinationNode, byte[] valueId)
+        {
+            return new FindValue(senderNode, destinationNode, valueId);
+        }
+
+        public static FindValue GetFindValueResponse(KademliaNode senderNode, KademliaNode destinationNode, Block block)
+        {
+            var message = new FindValue(senderNode, destinationNode, block.Rank);
+            message.DataBlock = block;
+            return message;
         }
     }
 }

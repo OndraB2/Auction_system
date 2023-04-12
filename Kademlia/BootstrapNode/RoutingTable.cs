@@ -33,7 +33,10 @@ namespace Kademlia
             if(distanceLevel >= 0 && distanceLevel < NumLevels)
             {
                 if(buckets[distanceLevel].Count <= BucketSize)
-                    buckets[distanceLevel].Add(node);
+                {
+                    if(!buckets[distanceLevel].Contains(node))
+                        buckets[distanceLevel].Add(node);
+                }
                 else
                     throw new Exception($"Bucket {distanceLevel} is full");
             }

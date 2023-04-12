@@ -16,8 +16,22 @@ namespace AuctionSystem
         public virtual void Start()
         {
             P2PUnit.Instance.Start();
+            
+            FindValue.OnResponseReceiveRegistrations += FindValueResponseReceived;
         }
 
-
+        private void FindValueResponseReceived(object ?sender, EventArgs args)
+        {
+            Console.WriteLine("find value response received");
+            if(sender != null && sender is FindValue)
+            {
+                FindValue findValue = sender as FindValue;
+                // store to memory?
+                if(findValue.DataBlock != null)
+                {
+                    DataModule.Instance.Store(findValue.DataBlock);
+                }
+            }
+        }
     }
 }

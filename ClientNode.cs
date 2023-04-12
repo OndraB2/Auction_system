@@ -1,4 +1,5 @@
 using Kademlia;
+using BlockChainLedger;
 
 namespace AuctionSystem
 {
@@ -29,6 +30,7 @@ namespace AuctionSystem
                     {
                         Console.WriteLine(n);
                     }
+                    waitForNewNodes--;
                 }
                 else  // is request
                 {
@@ -44,5 +46,40 @@ namespace AuctionSystem
                 }
             }
         }
+
+        private int waitForNewNodes = 0;
+        public void SendFindNode(byte[] id, bool waiting = false)
+        {
+            var tmpDest = new KademliaNode(id, "", -1);
+            P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetFindNode(P2PUnit.Instance.NodeId, tmpDest, tmpDest), 3);
+            
+            if(waiting)
+            {
+                waitForNewNodes = 3;
+                int i = 1000;
+                while(waitForNewNodes > 0 && i > 0)
+                {
+                    Task.Delay(20);
+                    i--;
+                }
+            }
+        }
+
+        public void Store(Block block)
+        {
+            SendFindNode(block.Rank, true);
+            var tmpDest = new KademliaNode(block.Rank, "", -1);
+            P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetStore(P2PUnit.Instance.NodeId, tmpDest, block), 3);
+
+            // timer and send again
+        }
+
+        public void FindValue(byte[] id)
+        {
+            SendFindNode(id, true);
+            var tmpDest = new KademliaNode(id, "", -1);
+            P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetFindValueRequest(P2PUnit.Instance.NodeId, tmpDest, id), 3);
+        }
+
     }
 }

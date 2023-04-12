@@ -1,8 +1,14 @@
+using BlockChainLedger;
+
 namespace Kademlia
 {
     class Store : Message
     {
-        public Store(KademliaNode senderNode, KademliaNode destinationNode) : base(senderNode, destinationNode) {}
+        public Block Block;
+        public Store(KademliaNode senderNode, KademliaNode destinationNode, Block block) : base(senderNode, destinationNode) 
+        {
+            this.Block = block;
+        }
 
         public override byte[] Serialize()
         {
@@ -12,6 +18,7 @@ namespace Kademlia
         public override void OnReceive()
         {
             Console.WriteLine("Store received");
+            DataModule.Instance.Store(Block);
         }
     }
 }

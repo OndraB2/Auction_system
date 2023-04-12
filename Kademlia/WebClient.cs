@@ -67,6 +67,7 @@ namespace Kademlia
                     if(IsForMe(wrapper))
                     {
                         Message message = Serializer.Deserialize(wrapper);
+                        P2PUnit.Instance.RoutingTable.AddNode(message.SenderNode);
                         new Thread(() => message.OnReceive()).Start();
                     }
                 }
@@ -83,6 +84,10 @@ namespace Kademlia
 
         private bool IsForMe(MessageWrapper wrapper)
         {
+            if(wrapper.MessageType == "FindValue")
+            {
+                return true;
+            }
             if(P2PUnit.Instance.NodeId.CompareNodeId(wrapper.DestinationNode))
             {
                 P2PUnit.Instance.Redirect(wrapper);
