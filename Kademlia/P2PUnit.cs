@@ -79,6 +79,7 @@ namespace Kademlia
 
         public void ConnectToBootstrapNode(KademliaNode localNode)
         {
+            Console.WriteLine($"my ip {localNode.IpAddress}:{localNode.Port} {localNode.NodeId[0]}.{localNode.NodeId[1]}");
             string bootstrapIp;
             int port;
             (bootstrapIp, port) = BootstrapNodeIpAddressApi.GetBootstrapIpAddress();

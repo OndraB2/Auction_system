@@ -8,9 +8,10 @@ namespace AuctionSystem
         
         public ApplicationNode()
         {
-            string ipAddress = P2PUnit.Instance.IpAddress;
-            int port = P2PUnit.Instance.Port;
-            localNode = KademliaNode.CreateInstance(ipAddress, port);
+            //string ipAddress = P2PUnit.Instance.IpAddress;
+            //int port = P2PUnit.Instance.Port;
+            //localNode = KademliaNode.CreateInstance(ipAddress, port);
+            localNode = P2PUnit.Instance.NodeId;
         }
 
         public virtual void Start()

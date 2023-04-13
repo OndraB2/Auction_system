@@ -12,12 +12,12 @@ namespace AuctionSystem
         {
             base.Start();
 
-            FindNode.OnReceiveRegistrations += FineNodeReceived;
+            FindNode.OnReceiveRegistrations += FindNodeReceived;
 
             P2PUnit.Instance.ConnectToBootstrapNode(this.localNode);
         }
 
-        private void FineNodeReceived(object ?sender, EventArgs args)  // RoutingTableReceived
+        private void FindNodeReceived(object ?sender, EventArgs args)  // RoutingTableReceived
         {
             if(sender != null && sender is FindNode)
             {
@@ -67,7 +67,8 @@ namespace AuctionSystem
 
         public void Store(Block block)
         {
-            SendFindNode(block.Rank, true);
+            if(!P2PUnit.Instance.RoutingTable.Contains(block.Rank))
+                SendFindNode(block.Rank, true);
             var tmpDest = new KademliaNode(block.Rank, "", -1);
             P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetStore(P2PUnit.Instance.NodeId, tmpDest, block), 3);
 
@@ -76,7 +77,8 @@ namespace AuctionSystem
 
         public void FindValue(byte[] id)
         {
-            SendFindNode(id, true);
+            if(!P2PUnit.Instance.RoutingTable.Contains(id))
+                SendFindNode(id, true);
             var tmpDest = new KademliaNode(id, "", -1);
             P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetFindValueRequest(P2PUnit.Instance.NodeId, tmpDest, id), 3);
         }

@@ -22,21 +22,25 @@ namespace Kademlia
         {
             database = new Dictionary<byte[], Block>(new ByteArrayComparer());
         }
-            
+
+        private static object _lock = new object();    
         public void Store(Block block)
         {
-            if(!database.ContainsKey(block.Rank))
+            lock(_lock)
             {
-
-                StringBuilder builder = new StringBuilder();
-                foreach(var b in block.Rank)
+                if(!database.ContainsKey(block.Rank))
                 {
-                    builder.Append(b);
-                    builder.Append('.');
+
+                    StringBuilder builder = new StringBuilder();
+                    foreach(var b in block.Rank)
+                    {
+                        builder.Append(b);
+                        builder.Append('.');
+                    }
+                    Console.WriteLine($"saving block " + builder.ToString());
+                    
+                    database.Add(block.Rank, block);
                 }
-                Console.WriteLine($"saving block " + builder.ToString());
-                
-                database.Add(block.Rank, block);
             }
         }
 

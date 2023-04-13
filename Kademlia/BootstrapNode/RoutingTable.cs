@@ -35,11 +35,28 @@ namespace Kademlia
                 if(buckets[distanceLevel].Count <= BucketSize)
                 {
                     if(!buckets[distanceLevel].Contains(node))
+                    {
+                        Console.WriteLine("Add node to bucket " + distanceLevel);
                         buckets[distanceLevel].Add(node);
+                    }
                 }
                 else
                     throw new Exception($"Bucket {distanceLevel} is full");
             }
+        }
+
+        public bool Contains(byte[] kademliaNode)
+        {
+            KademliaNode node = new KademliaNode(kademliaNode, "", -1);
+            int distanceLevel = GetDistanceLevel(node);
+            if(distanceLevel >= 0 && distanceLevel < NumLevels)
+            {
+                if(!buckets[distanceLevel].Contains(node))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void RemoveNode(KademliaNode node)
@@ -93,7 +110,7 @@ namespace Kademlia
         public List<KademliaNode> GetNodeOrClosestNodes(KademliaNode node, int numberOfNodes)
         {
             var nodes = this.GetClosestNodes(node, numberOfNodes);
-            if(nodes[0] == node)  // if is node address is closest node on position 0
+            if(nodes[0].CompareNodeId(node))  // if is node address is closest node on position 0
             {
                 return new List<KademliaNode>(){nodes[0]};
             }

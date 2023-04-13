@@ -64,6 +64,7 @@ namespace Kademlia
 
                     //Message message = Serializer.Deserialize(data);
                     MessageWrapper wrapper = Serializer.Deserialize(data);
+                    
                     if(IsForMe(wrapper))
                     {
                         Message message = Serializer.Deserialize(wrapper);
@@ -84,13 +85,17 @@ namespace Kademlia
 
         private bool IsForMe(MessageWrapper wrapper)
         {
-            if(wrapper.MessageType == "FindValue")
-            {
+            if(wrapper.MessageType == typeof(Connect).FullName || wrapper.MessageType == typeof(FindNode).FullName)
                 return true;
-            }
-            if(P2PUnit.Instance.NodeId.CompareNodeId(wrapper.DestinationNode))
+
+            // if(wrapper.MessageType == typeof(FindValue).FullName)
+            // {
+            //     return true;
+            // }
+            if(!P2PUnit.Instance.NodeId.CompareNodeId(wrapper.DestinationNode))
             {
-                P2PUnit.Instance.Redirect(wrapper);
+                Console.WriteLine($"not for me me-{P2PUnit.Instance.NodeId}  recv {wrapper.DestinationNode}");
+                //P2PUnit.Instance.Redirect(wrapper);
                 return false;
             }
             return true;
