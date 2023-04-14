@@ -34,7 +34,7 @@ namespace Kademlia
             {
                 if(buckets[distanceLevel].Count <= BucketSize)
                 {
-                    if(!buckets[distanceLevel].Contains(node))
+                    if(!buckets[distanceLevel].Any(x => x.CompareNodeId(node))) // .Contains(node)
                     {
                         Console.WriteLine("Add node to bucket " + distanceLevel);
                         buckets[distanceLevel].Add(node);
@@ -51,7 +51,7 @@ namespace Kademlia
             int distanceLevel = GetDistanceLevel(node);
             if(distanceLevel >= 0 && distanceLevel < NumLevels)
             {
-                if(!buckets[distanceLevel].Contains(node))
+                if(!buckets[distanceLevel].Any(x => x.CompareNodeId(node)))
                 {
                     return true;
                 }
@@ -62,7 +62,7 @@ namespace Kademlia
         public void RemoveNode(KademliaNode node)
         {
             int distanceLevel = GetDistanceLevel(node);
-            if(buckets[distanceLevel].Contains(node))
+            if(buckets[distanceLevel].Any(x => x.CompareNodeId(node)))
             {
                 buckets[distanceLevel].Remove(node);
             }

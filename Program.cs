@@ -49,6 +49,11 @@ namespace AuctionSystem
         byte[] id = new byte[20];
         id = Block.Increment(id);
         node.FindValue(id);
+
+        // test ping
+        var testNode = P2PUnit.Instance.RoutingTable.GetClosestNodes(P2PUnit.Instance.NodeId, 3).Last();
+        
+        Console.WriteLine(node.SendPing(testNode)? "ping ok" : "ping false");
       }
       Console.ReadLine();
     }

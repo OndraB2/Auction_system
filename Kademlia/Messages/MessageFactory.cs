@@ -48,6 +48,7 @@ namespace Kademlia
         {
             var message = new FindValue(senderNode, destinationNode, block.Rank);
             message.DataBlock = block;
+            message.IsResponse = true;
             return message;
         }
     }

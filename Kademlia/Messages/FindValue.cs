@@ -8,12 +8,15 @@ namespace Kademlia
 
         public Block? DataBlock;
 
+        public bool IsResponse;
+
         public static event EventHandler ?OnResponseReceiveRegistrations;
 
         public FindValue(KademliaNode senderNode, KademliaNode destinationNode, byte[] valueId) : base(senderNode, destinationNode) 
         {
             this.ValueId = valueId;
             DataBlock = null;
+            IsResponse = false;
         }
 
         public override byte[] Serialize()
@@ -23,10 +26,9 @@ namespace Kademlia
 
         public override void OnReceive()
         {
-            Console.WriteLine("FindValue received");
-
-            if(DataBlock == null)  // request
+            if(!IsResponse)  // request
             {
+                Console.WriteLine("FindValue request received");
                 var block = DataModule.Instance.Get(ValueId);
                 if(block != null)
                 {
@@ -36,6 +38,7 @@ namespace Kademlia
             }
             else  // response
             {
+                Console.WriteLine("FindValue response received");
                 OnResponseReceiveRegistrations?.Invoke(this, new EventArgs());
             }
         }

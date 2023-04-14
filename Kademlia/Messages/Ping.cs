@@ -17,7 +17,9 @@ namespace Kademlia
             Console.WriteLine("Ping received");
             if(!Response)
             {
+                Console.WriteLine("Sending ping response");
                 Ping pingResponse = MessageFactory.GetPingResponse(this);
+                P2PUnit.Instance.Send(pingResponse);
             }
             else
             {

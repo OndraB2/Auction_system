@@ -22,4 +22,16 @@ do
  cmd.exe /c start "Instance $i" wsl $command_to_run Client
 done
 
+# vypis do souboru
+# $command_to_run BootstrapNode > ./logs/instance0.txt &
+# sleep 2
+# for i in $(seq 1 $num_instances)
+# do
+#  $command_to_run Client  > ./logs/instance$i.txt &
+# done
+
+# echo "Press any key to continue"
+# read
+# pkill -f "sh ./run.sh"
+
 #cmd.exe /c start "Instance $i" wsl $command_to_run Client test1
