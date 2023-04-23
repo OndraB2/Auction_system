@@ -13,5 +13,10 @@ namespace BlockChainLedger{
                 return stream.ToArray();
             }
         }
+
+        public string GetHash()
+        {
+            return Block.GetHash("");
+        }
     }
 }

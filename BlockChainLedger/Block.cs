@@ -1,6 +1,9 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text.Json.Serialization;
+using System.Security.Cryptography;
+using System.Text;
+
 
 namespace BlockChainLedger{
     class Block
@@ -71,11 +74,41 @@ namespace BlockChainLedger{
             return arr;
         }
 
-        public virtual Block ValidateBlock() { return this;}
+        public virtual Block Mine() { return this;}
+
+        protected string GetTransactionsHash()
+        {
+            if(this.Transactions.Count > 0)
+                return GetHash(GetTransactionsHash(0, this.Transactions.Count - 1));
+            return "";
+        }
+
+        private string GetTransactionsHash(int low, int high)
+        {
+            if(low == high)
+                return this.Transactions[low].GetHash();
+            int split = (high - low) / 2 + low;     
+            return GetHash(GetTransactionsHash(low, split)) + GetHash(GetTransactionsHash(split + 1, high));
+        }
 
         public override string ToString()
         {
             return $"{Rank} {Hash} {HashOfPrevious} {Nonce} {Difficulty} {Timestamp} {Transactions.Count}";
         }
+
+        private static readonly SHA256 sha256 = SHA256.Create();
+        public static string GetHash(byte[] data)
+        {
+            byte[] hashData = sha256.ComputeHash(data);
+
+            var sBuilder = new StringBuilder();
+            // format each as a hexadecimal string.
+            for (int i = 0; i < hashData.Length; i++)
+            {
+                sBuilder.Append(hashData[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
+        }
+        public static string GetHash(string data) => GetHash(Encoding.UTF8.GetBytes(data));
     }
 }

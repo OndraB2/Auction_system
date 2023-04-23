@@ -79,15 +79,15 @@ namespace AuctionSystem
             if(!P2PUnit.Instance.RoutingTable.Contains(id))
                 SendFindNode(id, true);
             var tmpDest = new KademliaNode(id, "", -1);
+            this.findValueReceived = false;
             P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetFindValueRequest(P2PUnit.Instance.NodeId, tmpDest, id), 3);
 
             // if not found at first attempt
             // send find node and try again n times
             int n = 10;
-            findValueReceived = false;
             do{
                 this.findValueResetEvent.WaitOne(2000);
-                if(!findValueReceived)
+                if(!this.findValueReceived)
                 {
                     Console.WriteLine("FindValue not received finding new nodes and sending again");
                     // var message = MessageFactory.GetFindNode(P2PUnit.Instance.NodeId, tmpDest, tmpDest);
@@ -97,7 +97,7 @@ namespace AuctionSystem
                 }
                 n--;
             }
-            while(!findValueReceived && n >= 0);
+            while(!this.findValueReceived && n >= 0);
         }
 
         
