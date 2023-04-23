@@ -13,7 +13,7 @@ namespace BlockChainLedger
         {
         }
 
-        public override Block ValidateBlock()
+        public override Block Mine()
         {
             ComputeNonce();
             return this;
@@ -21,19 +21,16 @@ namespace BlockChainLedger
 
         private void ComputeNonce()
         {
-            byte[] transactionsBytes = TransactionsToByteArray();
+            byte[] transactionsBytes = Encoding.UTF8.GetBytes(GetTransactionsHash());
             int nonce = 0;
             string hash = "";
             string endValue = new string('0', Difficulty);
 
-            using (SHA256 sha256Hash = SHA256.Create())
+            do
             {
-                do
-                {
-                    nonce++;
-                    hash = GetHash(sha256Hash, ToByteArray(nonce, transactionsBytes));
-                }while(!hash.StartsWith(endValue));
-            }
+                nonce++;
+                hash = GetHash(ToByteArray(nonce, transactionsBytes));
+            }while(!hash.StartsWith(endValue));
 
             this.Hash = hash;
             this.Nonce = nonce;
@@ -55,29 +52,6 @@ namespace BlockChainLedger
             }
         }
 
-        private byte[] TransactionsToByteArray()
-        {
-            using(MemoryStream stream = new MemoryStream())
-            using(BinaryWriter writer = new BinaryWriter(stream))
-            {
-                foreach(var transaction in Transactions)
-                    writer.Write(transaction.ToByteArray());
-
-                return stream.ToArray();
-            }
-        }
-
-        private static string GetHash(HashAlgorithm hashAlgorithm, byte[] data)
-        {
-            byte[] hashData = hashAlgorithm.ComputeHash(data);
-
-            var sBuilder = new StringBuilder();
-            // format each as a hexadecimal string.
-            for (int i = 0; i < hashData.Length; i++)
-            {
-                sBuilder.Append(hashData[i].ToString("x2"));
-            }
-            return sBuilder.ToString();
-        }
+        
     }
 }
