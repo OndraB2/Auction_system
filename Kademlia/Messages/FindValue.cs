@@ -1,4 +1,7 @@
+using System.Security.Cryptography;
+using System.Text;
 using BlockChainLedger;
+using Newtonsoft.Json;
 
 namespace Kademlia
 {
@@ -41,6 +44,15 @@ namespace Kademlia
                 Console.WriteLine("FindValue response received");
                 OnResponseReceiveRegistrations?.Invoke(this, new EventArgs());
             }
+        }
+
+        public override byte[] ComputeHash()
+        {
+            string jsonMessage  = JsonConvert.SerializeObject(new {v = ValueId, db = DataBlock, res = IsResponse}, Formatting.None, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            });
+            return SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(jsonMessage));
         }
     }
 }

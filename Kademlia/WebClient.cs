@@ -67,9 +67,16 @@ namespace Kademlia
                     
                     if(IsForMe(wrapper))
                     {
-                        Message message = Serializer.Deserialize(wrapper);
-                        P2PUnit.Instance.RoutingTable.AddNode(message.SenderNode);
-                        new Thread(() => message.OnReceive()).Start();
+                        try
+                        {
+                            Message message = Serializer.Deserialize(wrapper);
+                            P2PUnit.Instance.RoutingTable.AddNode(message.SenderNode);
+                            new Thread(() => message.OnReceive()).Start();
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Listen Exception: " + ex.Message);
+                        }
                     }
                 }
             }
@@ -85,7 +92,7 @@ namespace Kademlia
 
         private bool IsForMe(MessageWrapper wrapper)
         {
-            if(wrapper.MessageType == typeof(Connect).FullName || wrapper.MessageType == typeof(FindNode).FullName)
+            if(wrapper.MessageType == typeof(Connect).FullName || wrapper.MessageType == typeof(FindNode).FullName)  // bootstrap node, 
                 return true;
 
             // if(wrapper.MessageType == typeof(FindValue).FullName)

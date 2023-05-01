@@ -6,11 +6,19 @@ namespace Kademlia
         public byte[] NodeId { get; set; }
         public string IpAddress { get; set; }
         public int Port { get; set; }
+        public byte[] PublicKey { get; set; }
         
-        public KademliaNode(byte[] nodeId, string ipAddress, int port) {
+        // public KademliaNode(byte[] nodeId, string ipAddress, int port) {
+        //     NodeId = nodeId;
+        //     IpAddress = ipAddress;
+        //     Port = port;
+        // }
+
+        public KademliaNode(byte[] nodeId, string ipAddress, int port, byte[] publicKey = null) {
             NodeId = nodeId;
             IpAddress = ipAddress;
             Port = port;
+            PublicKey = publicKey;
         }
 
         public static KademliaNode CreateInstance(string ipAddress, int port)
@@ -19,6 +27,14 @@ namespace Kademlia
             Random rnd = new Random();
             rnd.NextBytes(id);
             return new KademliaNode(id, ipAddress, port);
+        }
+
+        public static KademliaNode CreateInstance(string ipAddress, int port, byte[] publicKey)
+        {
+            byte[] id = new byte[20];
+            Random rnd = new Random();
+            rnd.NextBytes(id);
+            return new KademliaNode(id, ipAddress, port, publicKey);
         }
         
         public bool CompareNodeId(KademliaNode node)

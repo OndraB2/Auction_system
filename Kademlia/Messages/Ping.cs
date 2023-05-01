@@ -1,3 +1,7 @@
+using System.Security.Cryptography;
+using System.Text;
+using Newtonsoft.Json;
+
 namespace Kademlia
 {
     class Ping : Message
@@ -25,6 +29,15 @@ namespace Kademlia
             {
                 OnReceiveResponseRegistrations?.Invoke(this, new EventArgs());
             }
+        }
+
+        public override byte[] ComputeHash()
+        {
+            string jsonMessage  = JsonConvert.SerializeObject(new {s = this.SenderNode, res = Response}, Formatting.None, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            });
+            return SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(jsonMessage));
         }
     }
 }

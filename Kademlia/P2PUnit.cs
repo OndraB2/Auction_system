@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Threading;
 
 namespace Kademlia
 {
     class P2PUnit{
         public KademliaNode NodeId { get; private set;}  // 160 bitu
+        public RSA EncryptionKeys;
         public RoutingTable RoutingTable;
         public string IpAddress {get; private set;}
         public int Port {get; private set;}
@@ -32,7 +34,8 @@ namespace Kademlia
             IpAddress = GetIpAddress();
             Port = GetPort();
             client = new WebClient(Port);
-            this.NodeId = KademliaNode.CreateInstance(IpAddress, Port);
+            EncryptionKeys = RSA.Create();
+            this.NodeId = KademliaNode.CreateInstance(IpAddress, Port, EncryptionKeys.ExportRSAPublicKey());
             RoutingTable = new RoutingTable(this.NodeId);
         }
 

@@ -1,4 +1,7 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Kademlia
 {
@@ -23,6 +26,15 @@ namespace Kademlia
         public override void OnReceive()
         {
             OnReceiveRegistrations?.Invoke(this, new EventArgs());
+        }
+
+        public override byte[] ComputeHash()
+        {
+            string jsonMessage  = JsonConvert.SerializeObject(new {n = Neighbours, wn = WantedNode}, Formatting.None, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            });
+            return SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(jsonMessage));
         }
     }
 }

@@ -17,5 +17,7 @@ namespace Kademlia
         public abstract byte[] Serialize();
 
         public abstract void OnReceive();
+
+        public virtual byte[] ComputeHash() {return null;}
     }
 }

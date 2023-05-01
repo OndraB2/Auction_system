@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace BlockChainLedger
 {
@@ -12,6 +13,10 @@ namespace BlockChainLedger
         public PowBlock(Block previousBlock, int difficulty, List<Transaction> transactions) : base(previousBlock, difficulty, transactions)
         {
         }
+
+        [JsonConstructor]
+        public PowBlock() : base()
+        {}
 
         public override Block Mine()
         {

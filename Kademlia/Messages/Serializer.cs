@@ -1,16 +1,30 @@
 using Newtonsoft.Json;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Kademlia
 {
     class Serializer
     {
+        private static readonly bool EncriptionActivated = true;
         public static byte[] Serialize<T>(T message)
         {
             MessageWrapper<T> wrapper = new MessageWrapper<T>();
-            wrapper.Message = message; 
             wrapper.DestinationNode = (message as Message).DestinationNode;
             wrapper.SenderNode = (message as Message).SenderNode;
+            if(EncriptionActivated && wrapper.MessageType != typeof(Connect).FullName) // && wrapper.DestinationNode.PublicKey != null
+            {
+                using (var rsa = new RSACryptoServiceProvider())
+                {
+                    byte[] hash = (message as Message).ComputeHash();
+                    byte[] signature = P2PUnit.Instance.EncryptionKeys.SignHash(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    wrapper.Signature = signature;
+                }
+            }
+            wrapper.Message = message; 
+
             string json = JsonConvert.SerializeObject(wrapper, Formatting.None, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
@@ -29,19 +43,33 @@ namespace Kademlia
 
         public static Message Deserialize(MessageWrapper wrapper)
         {
-            //string json = Encoding.UTF8.GetString(bytes);
-            //MessageWrapper deserialized  = JsonConvert.DeserializeObject<MessageWrapper>(json);
+            Type messageType = Type.GetType(wrapper.MessageType);
+            object message;
             
-            var messageType = Type.GetType(wrapper.MessageType);
-            var message = JsonConvert.DeserializeObject(Convert.ToString(wrapper.Message), messageType);
+            Console.WriteLine(messageType.ToString());
 
+            var settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = TypeNameHandling.All;
+            message = JsonConvert.DeserializeObject(Convert.ToString(wrapper.Message), messageType, settings);
+
+            if(EncriptionActivated && wrapper.MessageType != typeof(Connect).FullName && P2PUnit.Instance.RoutingTable.NumberOfNodes > 1)
+            {
+                using (var rsa = new RSACryptoServiceProvider())
+                {
+                    rsa.ImportRSAPublicKey(wrapper.SenderNode.PublicKey, out int _);
+                    byte[] hash = (message as Message).ComputeHash();
+                    bool valid = rsa.VerifyHash(hash, wrapper.Signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                    if(!valid)
+                        throw new Exception("Invalid message signature");
+                }
+            }
             return message as Message;
         }
 
         public static MessageWrapper Deserialize(byte[] bytes)
         {
             string json = Encoding.UTF8.GetString(bytes);
-            MessageWrapper deserialized  = JsonConvert.DeserializeObject<MessageWrapper>(json);
+            MessageWrapper deserialized = JsonConvert.DeserializeObject<MessageWrapper>(json);
             return deserialized;
             // var messageType = Type.GetType(deserialized.MessageType);
             // var message = JsonConvert.DeserializeObject(Convert.ToString(deserialized.Message), messageType);

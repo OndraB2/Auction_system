@@ -6,6 +6,8 @@ namespace Kademlia
         private const int BucketSize = 20;
         private const int NumLevels = 160;
 
+        public int NumberOfNodes {get; private set;} = 0;
+
         private List<KademliaNode> []buckets;
 
         private KademliaNode localNode;
@@ -38,6 +40,7 @@ namespace Kademlia
                     {
                         Console.WriteLine("Add node to bucket " + distanceLevel);
                         buckets[distanceLevel].Add(node);
+                        NumberOfNodes++;
                     }
                 }
                 else
@@ -65,6 +68,7 @@ namespace Kademlia
             if(buckets[distanceLevel].Any(x => x.CompareNodeId(node)))
             {
                 buckets[distanceLevel].Remove(node);
+                NumberOfNodes--;
             }
         }
 
