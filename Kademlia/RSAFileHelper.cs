@@ -9,26 +9,15 @@ namespace Kademlia
     {
         public static void SaveRSAToFile(string filePath, RSA rsa)
         {
-            RSAParameters publicKeyParameters = rsa.ExportParameters(false);
-            RSAParameters privateKeyParameters = rsa.ExportParameters(true);
-
-            string publicKeyJson = JsonSerializer.Serialize(publicKeyParameters);
-            string privateKeyJson = JsonSerializer.Serialize(privateKeyParameters);
-
-            File.WriteAllText(filePath, $"{publicKeyJson}\n{privateKeyJson}");
+            string xmlString = rsa.ToXmlString(true);
+            File.WriteAllText(filePath, xmlString);
         }
 
         public static RSA LoadRSAFromFile(string filePath)
         {
-            string[] lines = File.ReadAllLines(filePath);
-
-            RSAParameters publicKeyParameters = JsonSerializer.Deserialize<RSAParameters>(lines[0]);
-            RSAParameters privateKeyParameters = JsonSerializer.Deserialize<RSAParameters>(lines[1]);
-
+            string xmlString = File.ReadAllText(filePath);
             RSA rsa = RSA.Create();
-            rsa.ImportParameters(publicKeyParameters);
-            rsa.ImportParameters(privateKeyParameters);
-
+            rsa.FromXmlString(xmlString);
             return rsa;
         }
     }

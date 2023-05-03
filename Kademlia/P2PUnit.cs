@@ -42,23 +42,23 @@ namespace Kademlia
 
         private static RSA GetEncryptionKeys()
         {
-            // RSA rsa;
-            // // load from file if exists
-            // if(File.Exists(Program.homeFolder + "keys.obj"))
-            // {
-            //     rsa = RSAFileHelper.LoadRSAFromFile(Program.homeFolder + "keys.obj");
-            // }
-            // // or generate
-            // else
-            // {
-            //     if (!Directory.Exists(Program.homeFolder))
-            //     {
-            //         Directory.CreateDirectory(Program.homeFolder);
-            //     }  
-            //     rsa = RSA.Create();
-            //     RSAFileHelper.SaveRSAToFile(Program.homeFolder + "keys.obj", rsa);
-            // }
-            return RSA.Create(); //rsa;
+            RSA rsa;
+            // load from file if exists
+            if(File.Exists(Program.homeFolder + "keys.txt"))
+            {
+                rsa = RSAFileHelper.LoadRSAFromFile(Program.homeFolder + "keys.txt");
+            }
+            // or generate
+            else
+            {
+                if (!Directory.Exists(Program.homeFolder))
+                {
+                    Directory.CreateDirectory(Program.homeFolder);
+                }  
+                rsa = RSA.Create();
+                RSAFileHelper.SaveRSAToFile(Program.homeFolder + "keys.txt", rsa);
+            }
+            return rsa;
         }
 
         private string GetIpAddress() => Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();

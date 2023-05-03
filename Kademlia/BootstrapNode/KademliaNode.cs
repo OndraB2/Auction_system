@@ -1,4 +1,6 @@
 using System.Text;
+using AuctionSystem;
+using Newtonsoft.Json;
 
 namespace Kademlia
 {
@@ -31,14 +33,51 @@ namespace Kademlia
 
         public static KademliaNode CreateInstance(string ipAddress, int port, byte[] publicKey)
         {
-            // if file exists load from file
-
-            // else generate
             byte[] id = new byte[20];
-            Random rnd = new Random();
-            rnd.NextBytes(id);
-            // save to file (jako celou instanci KademliaNode?)
-            return new KademliaNode(id, ipAddress, port, publicKey);
+            KademliaNode node;
+            // if file exists load from file
+            if(File.Exists(Program.homeFolder + "kademliaNode.txt"))
+            {
+                node = LoadFromFile(Program.homeFolder + "kademliaNode.txt");
+                node.IpAddress = ipAddress;
+                node.Port = port;
+                for(int i = 0; i < publicKey.Length; i++)
+                {
+                    if(publicKey[i] != node.PublicKey[i])
+                        throw new Exception("public key incompatibility between files");
+                }
+            }
+            // else generate
+            else
+            {
+                if (!Directory.Exists(Program.homeFolder))
+                {
+                    Directory.CreateDirectory(Program.homeFolder);
+                }  
+                Random rnd = new Random();
+                rnd.NextBytes(id);
+                node = new KademliaNode(id, ipAddress, port, publicKey);
+                SaveToFile(Program.homeFolder + "kademliaNode.txt", node);
+            }
+            return node;
+        }
+
+        private static void SaveToFile(string filePath, KademliaNode node)
+        {
+            string json = JsonConvert.SerializeObject(node, Formatting.None, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            });
+            File.WriteAllText(filePath, json);
+        }
+
+        private static KademliaNode LoadFromFile(string filePath)
+        {
+            string json = File.ReadAllText(filePath);
+            var settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = TypeNameHandling.All;
+            KademliaNode node = JsonConvert.DeserializeObject(json, typeof(KademliaNode), settings) as KademliaNode;
+            return node;
         }
 
         public byte[] ToByteArray()
