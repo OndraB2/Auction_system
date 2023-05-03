@@ -3,12 +3,13 @@ using System.Numerics;
 using System.Text.Json.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-
+using Kademlia;
 
 namespace BlockChainLedger{
     class Block
     {
         public byte[] Rank {get; set;} = new byte[20];
+        public KademliaNode MinerId {get; set;}
         public string Hash {get; set;}
         public string HashOfPrevious {get; set;}
         public int Nonce {get; set;}
@@ -16,7 +17,7 @@ namespace BlockChainLedger{
         public DateTime Timestamp {get; set;}
         public List<Transaction> Transactions {get; set;}
 
-        public Block(int rank, string hashOfPrevious, int difficulty, List<Transaction> transactions)
+        public Block(int rank, string hashOfPrevious, int difficulty, List<Transaction> transactions, KademliaNode minerId)
         {
             var tt = BitConverter.GetBytes(rank);
             BitConverter.GetBytes(rank).Reverse().ToArray().CopyTo(this.Rank, 16);
@@ -25,9 +26,10 @@ namespace BlockChainLedger{
             this.Transactions = transactions;
             this.Timestamp = DateTime.Now;
             this.Hash = "";
+            this.MinerId = minerId;
         }
 
-        public Block(Block previousBlock, int difficulty, List<Transaction> transactions)
+        public Block(Block previousBlock, int difficulty, List<Transaction> transactions, KademliaNode minerId)
         {
             this.Rank = Increment(previousBlock.Rank);
             this.HashOfPrevious = previousBlock.Hash;
@@ -35,6 +37,7 @@ namespace BlockChainLedger{
             this.Transactions = transactions;
             this.Timestamp = DateTime.Now;
             this.Hash = "";
+            this.MinerId = minerId;
         }
 
         // [JsonConstructor]
@@ -74,21 +77,46 @@ namespace BlockChainLedger{
             return arr;
         }
 
-        public virtual Block Mine() { return this;}
-
-        protected string GetTransactionsHash()
+        public static byte[] Decrement(byte[] arr)
         {
-            if(this.Transactions.Count > 0)
-                return GetHash(GetTransactionsHash(0, this.Transactions.Count - 1));
-            return "";
+            bool borrow = true;
+            for (int i = arr.Length - 1; i >= 0; i--)
+            {
+                if (borrow)
+                {
+                    borrow = false;
+                    if (arr[i] == 0x00)
+                    {
+                        arr[i] = 0xFF;
+                        borrow = true;
+                    }
+                    else
+                    {
+                        arr[i]--;
+                    }
+                }
+            }
+            return arr;
         }
 
-        private string GetTransactionsHash(int low, int high)
+
+        public virtual Block Mine() { return this;}
+
+        protected byte[] GetTransactionsHash()
+        {
+            if(this.Transactions.Count > 0)
+                return sha256.ComputeHash(GetTransactionsHash(0, this.Transactions.Count - 1));
+            return new byte[]{};
+        }
+
+        private byte[] GetTransactionsHash(int low, int high)
         {
             if(low == high)
                 return this.Transactions[low].GetHash();
-            int split = (high - low) / 2 + low;     
-            return GetHash(GetTransactionsHash(low, split)) + GetHash(GetTransactionsHash(split + 1, high));
+            int split = (high - low) / 2 + low;  
+            byte[] left = GetTransactionsHash(low, split);
+            byte[] right = GetTransactionsHash(split + 1, high);   
+            return sha256.ComputeHash(left.Concat(right).ToArray());
         }
 
         public override string ToString()

@@ -1,16 +1,17 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
+using Kademlia;
 
 namespace BlockChainLedger
 {
     class PowBlock : Block
     {
-        public PowBlock(int rank, string hashOfPrevious, int difficulty, List<Transaction> transactions) : base(rank, hashOfPrevious, difficulty, transactions)
+        public PowBlock(int rank, string hashOfPrevious, int difficulty, List<Transaction> transactions, KademliaNode minerId) : base(rank, hashOfPrevious, difficulty, transactions, minerId)
         {
         }
 
-        public PowBlock(Block previousBlock, int difficulty, List<Transaction> transactions) : base(previousBlock, difficulty, transactions)
+        public PowBlock(Block previousBlock, int difficulty, List<Transaction> transactions, KademliaNode minerId) : base(previousBlock, difficulty, transactions, minerId)
         {
         }
 
@@ -26,7 +27,7 @@ namespace BlockChainLedger
 
         private void ComputeNonce()
         {
-            byte[] transactionsBytes = Encoding.UTF8.GetBytes(GetTransactionsHash());
+            byte[] transactionsBytes = GetTransactionsHash();
             int nonce = 0;
             string hash = "";
             string endValue = new string('0', Difficulty);
@@ -51,6 +52,7 @@ namespace BlockChainLedger
                 writer.Write(Difficulty);
                 writer.Write(transactionsBytes);
                 writer.Write(nonce);
+                writer.Write(MinerId.ToByteArray());
                 //writer.Write(Encoding.UTF8.GetBytes(MyString));
 
                 return stream.ToArray();

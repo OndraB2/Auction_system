@@ -17,7 +17,7 @@ namespace Kademlia
 
         private static DataModule? instance;
 
-        private Dictionary<byte[], Block> database;
+        public Dictionary<byte[], Block> database;
         private DataModule()
         {
             database = new Dictionary<byte[], Block>(new ByteArrayComparer());

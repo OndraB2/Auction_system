@@ -42,13 +42,19 @@ namespace AuctionSystem
       //   RoutingTableTest();
         ClientNode node = new ClientNode();
         node.Start();
-        Block b = new PowBlock(1, "", 3, new List<Transaction>(){new Transaction(), new Transaction(), new Transaction(), new Transaction()});
+        Block b = new PowBlock(1, "", 3, new List<Transaction>(){
+          new NewAuctionItemTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId,"item 1", 20,50), 
+          new NewAuctionItemTransaction(2,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId,"item 2", 20,50),
+          new NewItemBidTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25),
+          new EndOfAuctionTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25)
+          }, P2PUnit.Instance.NodeId);
         b.Mine();
         node.Store(b);
         Task.Delay(1000);
         byte[] id = new byte[20];
         id = Block.Increment(id);
         node.FindValue(id);
+        //var xxxxx = DataModule.Instance.database;
 
         // test ping
         var testNode = P2PUnit.Instance.RoutingTable.GetClosestNodes(P2PUnit.Instance.NodeId, 3).Last();
@@ -61,19 +67,19 @@ namespace AuctionSystem
 
     static void PoWBlockTest()
     {
-      Block block = new PowBlock(0, "", 4, new List<Transaction>() {new Transaction()});
-      List<Block> blockList = new List<Block>();
-      block.Mine();
-      blockList.Add(block);
-      Console.WriteLine(blockList.Last());
-      for(int i = 0; i < 10; i++)
-      {
-        Block block2 = new PowBlock(blockList.Last(), 4, new List<Transaction>() {new Transaction(), new Transaction()});
-        block2.Mine();
-        blockList.Add(block2);
-        Console.WriteLine(blockList.Last());
-      }
-      Console.WriteLine(blockList.Count);
+      // Block block = new PowBlock(0, "", 4, new List<Transaction>() {new Transaction()});
+      // List<Block> blockList = new List<Block>();
+      // block.Mine();
+      // blockList.Add(block);
+      // Console.WriteLine(blockList.Last());
+      // for(int i = 0; i < 10; i++)
+      // {
+      //   Block block2 = new PowBlock(blockList.Last(), 4, new List<Transaction>() {new Transaction(), new Transaction()});
+      //   block2.Mine();
+      //   blockList.Add(block2);
+      //   Console.WriteLine(blockList.Last());
+      // }
+      // Console.WriteLine(blockList.Count);
     }
 
     static void P2PWebClientTest()

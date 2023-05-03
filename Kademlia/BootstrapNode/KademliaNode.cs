@@ -36,6 +36,20 @@ namespace Kademlia
             rnd.NextBytes(id);
             return new KademliaNode(id, ipAddress, port, publicKey);
         }
+
+        public byte[] ToByteArray()
+        {
+            using(MemoryStream stream = new MemoryStream())
+            using(BinaryWriter writer = new BinaryWriter(stream))
+            {
+                writer.Write(Port);
+                writer.Write(PublicKey);
+                writer.Write(NodeId);
+                writer.Write(Encoding.UTF8.GetBytes(IpAddress));
+
+                return stream.ToArray();
+            }
+        }
         
         public bool CompareNodeId(KademliaNode node)
         {
