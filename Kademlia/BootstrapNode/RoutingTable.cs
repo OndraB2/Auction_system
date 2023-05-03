@@ -1,3 +1,5 @@
+using AuctionSystem;
+
 namespace Kademlia
 {
     class RoutingTable
@@ -11,6 +13,7 @@ namespace Kademlia
         private List<KademliaNode> []buckets;
 
         private KademliaNode localNode;
+        private ApplicationNode applicationNode;
         public RoutingTable(KademliaNode localNode)
         {
             this.localNode = localNode;
@@ -20,6 +23,34 @@ namespace Kademlia
                 buckets[i] = new List<KademliaNode>();
             }
             AddNode(localNode);
+        }
+
+        private Timer PingTimer;
+        public void SetApplicationNode(ApplicationNode applicationNode)
+        {
+            this.applicationNode = applicationNode;
+
+            PingTimer = new Timer(new TimerCallback(TestActiveNodes), null, 10000, 60000);
+        }
+
+        private void TestActiveNodes(object ?state)
+        {
+            List<KademliaNode> ToRemove = new List<KademliaNode>();
+            foreach(var bucket in buckets)
+            {
+                foreach(var node in bucket)
+                {
+                    if(!this.applicationNode.SendPing(node))
+                    {
+                        ToRemove.Add(node);
+                    }
+                }
+            }
+            foreach(var node in ToRemove)
+            {
+                RemoveNode(node);
+                Console.WriteLine($"Removing Node no ping response {node.ToString()}");
+            }
         }
 
         public void AddNode(List<KademliaNode> nodes)
@@ -38,7 +69,7 @@ namespace Kademlia
                 {
                     if(!buckets[distanceLevel].Any(x => x.CompareNodeId(node))) // .Contains(node)
                     {
-                        Console.WriteLine("Add node to bucket " + distanceLevel);
+                        Console.WriteLine("Add node to bucket " + distanceLevel + " - " + node.ToString());
                         buckets[distanceLevel].Add(node);
                         NumberOfNodes++;
                     }

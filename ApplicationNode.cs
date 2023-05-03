@@ -17,6 +17,7 @@ namespace AuctionSystem
         public virtual void Start()
         {
             P2PUnit.Instance.Start();
+            P2PUnit.Instance.RoutingTable.SetApplicationNode(this);
             
             FindValue.OnResponseReceiveRegistrations += FindValueResponseReceived;
             Ping.OnReceiveResponseRegistrations += PingResponseReceived;

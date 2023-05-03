@@ -18,10 +18,10 @@ namespace Kademlia
 
         public override void OnReceive()
         {
-            Console.WriteLine("Ping received");
+            //Console.WriteLine("Ping received");
             if(!Response)
             {
-                Console.WriteLine("Sending ping response");
+                //Console.WriteLine("Sending ping response");
                 Ping pingResponse = MessageFactory.GetPingResponse(this);
                 P2PUnit.Instance.Send(pingResponse);
             }
