@@ -31,9 +31,13 @@ namespace Kademlia
 
         public static KademliaNode CreateInstance(string ipAddress, int port, byte[] publicKey)
         {
+            // if file exists load from file
+
+            // else generate
             byte[] id = new byte[20];
             Random rnd = new Random();
             rnd.NextBytes(id);
+            // save to file (jako celou instanci KademliaNode?)
             return new KademliaNode(id, ipAddress, port, publicKey);
         }
 

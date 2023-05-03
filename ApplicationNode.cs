@@ -1,3 +1,4 @@
+using BlockChainLedger;
 using Kademlia;
 
 namespace AuctionSystem
@@ -23,7 +24,7 @@ namespace AuctionSystem
             Ping.OnReceiveResponseRegistrations += PingResponseReceived;
         }
 
-        protected bool findValueReceived;
+        protected Block? findValueReceived;
         protected ManualResetEvent findValueResetEvent = new ManualResetEvent(false);
         private void FindValueResponseReceived(object ?sender, EventArgs args)
         {
@@ -37,7 +38,7 @@ namespace AuctionSystem
                 // store to memory?
                 else if(findValue.DataBlock != null)
                 {
-                    findValueReceived = true;
+                    findValueReceived = findValue.DataBlock;
                     DataModule.Instance.Store(findValue.DataBlock);
                     findValueResetEvent.Set();
                 }

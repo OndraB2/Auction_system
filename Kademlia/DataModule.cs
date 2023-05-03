@@ -46,20 +46,38 @@ namespace Kademlia
 
         public Block? Get(byte[] ValueId)
         {
-            StringBuilder builder = new StringBuilder();
-            foreach(var b in ValueId)
+            lock(_lock)
             {
-                builder.Append(b);
-                builder.Append('.');
-            }
-            Console.WriteLine($"finding block " + builder.ToString());
+                StringBuilder builder = new StringBuilder();
+                foreach(var b in ValueId)
+                {
+                    builder.Append(b);
+                    builder.Append('.');
+                }
+                Console.WriteLine($"finding block " + builder.ToString());
 
-            if(database.ContainsKey(ValueId))
-            {
-                return database[ValueId];
+                if(database.ContainsKey(ValueId))
+                {
+                    return database[ValueId];
+                }
+                Console.WriteLine("block not found");
+                return null;
             }
-            Console.WriteLine("block not found");
-            return null;
+        }
+
+        public byte[] GetLastBlockId()
+        {
+            lock(_lock)
+            {
+                if(database.Count > 0)
+                {
+                    var blockIds = database.Keys.ToList();
+                    blockIds.Sort(new ByteListComparer());
+
+                    return blockIds.Last().Clone() as byte[];
+                }
+                return new byte[20];
+            }
         }
     }
 

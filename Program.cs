@@ -6,6 +6,8 @@ namespace AuctionSystem
 {
   class Program
   {
+    public static string mode;
+    public static string homeFolder;
     //static ManualResetEvent _quitEvent = new ManualResetEvent(false);
     static void Main(string[] args)
     {
@@ -14,9 +16,13 @@ namespace AuctionSystem
       //   eArgs.Cancel = true;
       // };
       // _quitEvent.WaitOne();
-      string mode = "";
-      if(args.Length>1)
+      mode = "";
+      homeFolder = "./aktualniInstance/";
+      if(args.Length>2)
+      {
         mode = args[1];
+        homeFolder = args[2];
+      }
       else if(args.Length>0)
         mode = args[0];
       if(mode != "")
@@ -44,9 +50,9 @@ namespace AuctionSystem
         node.Start();
         Block b = new PowBlock(1, "", 3, new List<Transaction>(){
           new NewAuctionItemTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId,"item 1", 20,50), 
-          new NewAuctionItemTransaction(2,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId,"item 2", 20,50),
-          new NewItemBidTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25),
-          new EndOfAuctionTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25)
+          new NewAuctionItemTransaction(2,DateTime.Now, 2, P2PUnit.Instance.NodeId.NodeId,"item 2", 20,50),
+          new NewItemBidTransaction(3,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25),
+          new EndOfAuctionTransaction(4,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25)
           }, P2PUnit.Instance.NodeId);
         b.Mine();
         node.Store(b);
@@ -55,6 +61,11 @@ namespace AuctionSystem
         id = Block.Increment(id);
         node.FindValue(id);
         //var xxxxx = DataModule.Instance.database;
+
+        DataModuleAPI dmapi = new DataModuleAPI(node);
+        var ttt = dmapi.FindLastBlockId();
+        var tttt = dmapi.IsTransactionAlreadyInBlock(new NewItemBidTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25));
+        var ttttt = dmapi.FindActiveAuctions();
 
         // test ping
         var testNode = P2PUnit.Instance.RoutingTable.GetClosestNodes(P2PUnit.Instance.NodeId, 3).Last();

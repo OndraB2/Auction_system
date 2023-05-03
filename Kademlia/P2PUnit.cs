@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading;
+using AuctionSystem;
 
 namespace Kademlia
 {
@@ -34,9 +35,30 @@ namespace Kademlia
             IpAddress = GetIpAddress();
             Port = GetPort();
             client = new WebClient(Port);
-            EncryptionKeys = RSA.Create();
+            EncryptionKeys = GetEncryptionKeys();
             this.NodeId = KademliaNode.CreateInstance(IpAddress, Port, EncryptionKeys.ExportRSAPublicKey());
             RoutingTable = new RoutingTable(this.NodeId);
+        }
+
+        private static RSA GetEncryptionKeys()
+        {
+            // RSA rsa;
+            // // load from file if exists
+            // if(File.Exists(Program.homeFolder + "keys.obj"))
+            // {
+            //     rsa = RSAFileHelper.LoadRSAFromFile(Program.homeFolder + "keys.obj");
+            // }
+            // // or generate
+            // else
+            // {
+            //     if (!Directory.Exists(Program.homeFolder))
+            //     {
+            //         Directory.CreateDirectory(Program.homeFolder);
+            //     }  
+            //     rsa = RSA.Create();
+            //     RSAFileHelper.SaveRSAToFile(Program.homeFolder + "keys.obj", rsa);
+            // }
+            return RSA.Create(); //rsa;
         }
 
         private string GetIpAddress() => Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();

@@ -15,6 +15,8 @@ namespace AuctionSystem
             FindNode.OnReceiveRegistrations += FindNodeReceived;
 
             P2PUnit.Instance.ConnectToBootstrapNode(this.localNode);
+
+            Thread.Sleep(500);  // watiting for connection established
         }
 
         private void FindNodeReceived(object ?sender, EventArgs args)  // RoutingTableReceived
@@ -74,20 +76,20 @@ namespace AuctionSystem
             // timer and send again
         }
 
-        public void FindValue(byte[] id)
+        public bool FindValue(byte[] id, int n = 10)
         {
             if(!P2PUnit.Instance.RoutingTable.Contains(id))
                 SendFindNode(id, true);
             var tmpDest = new KademliaNode(id, "", -1);
-            this.findValueReceived = false;
+            this.findValueReceived = null;
             P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetFindValueRequest(P2PUnit.Instance.NodeId, tmpDest, id), 3);
 
             // if not found at first attempt
             // send find node and try again n times
-            int n = 10;
-            do{
+            for(int i = 0 ; i < n; i++)
+            {
                 this.findValueResetEvent.WaitOne(2000);
-                if(!this.findValueReceived)
+                if(this.findValueReceived == null)
                 {
                     Console.WriteLine("FindValue not received finding new nodes and sending again");
                     // var message = MessageFactory.GetFindNode(P2PUnit.Instance.NodeId, tmpDest, tmpDest);
@@ -95,9 +97,24 @@ namespace AuctionSystem
                     this.SendFindNode(id, true);
                     P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetFindValueRequest(P2PUnit.Instance.NodeId, tmpDest, id), 3);
                 }
-                n--;
+                else
+                {
+                    bool sameId = true;
+                    for(int j = 0; j < this.findValueReceived.Rank.Length; j++)
+                    {
+                        if(this.findValueReceived.Rank[j] != id[j])
+                        {
+                            sameId = false;
+                        }
+                    }
+                    if(sameId)
+                        return true;
+                    else
+                        this.findValueReceived = null;
+                }
             }
-            while(!this.findValueReceived && n >= 0);
+
+            return false;
         }
 
         

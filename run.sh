@@ -15,11 +15,11 @@ num_instances=5
 #done
 
 # wsl
-cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode
-sleep 2
+cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
+sleep 3
 for i in $(seq 1 $num_instances)
 do
- cmd.exe /c start "Instance $i" wsl $command_to_run Client
+ cmd.exe /c start "Instance $i" wsl $command_to_run Client ./terminalInstantions/$i/  
 done
 
 # vypis do souboru
