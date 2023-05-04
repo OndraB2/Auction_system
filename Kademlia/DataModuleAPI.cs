@@ -71,6 +71,30 @@ namespace Kademlia
             return activeAuctions;
         }
 
+        public List<Transaction> FindFinishedAuctions(int n = 10)
+        {
+            List<Transaction> finishedAuctions = new List<Transaction>();
+            List<byte[]> lastNBlocksIds = this.GetLastNBlockIds(n);
+            foreach(var blockId in lastNBlocksIds)
+            {
+                Block? block = DataModule.Instance.Get(blockId);
+                if(block != null)
+                {
+                    foreach(var t in block.Transactions)
+                    {
+                        if(t.GetType() == typeof(EndOfAuctionTransaction))
+                        {
+                            if(!finishedAuctions.Any(item => item.AuctionItemId == t.AuctionItemId))
+                            {
+                                finishedAuctions.Add(t);
+                            }
+                        }
+                    }
+                }
+            }
+            return finishedAuctions;
+        }
+
 
         
 

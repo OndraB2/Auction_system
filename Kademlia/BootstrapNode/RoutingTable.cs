@@ -62,20 +62,50 @@ namespace Kademlia
         }
         public void AddNode(KademliaNode node)
         {
-            int distanceLevel = GetDistanceLevel(node);
-            if(distanceLevel >= 0 && distanceLevel < NumLevels)
+            if(Contains(node))
             {
-                if(buckets[distanceLevel].Count <= BucketSize)
+                Console.WriteLine("contains node");
+                UpdateNode(node);
+            }
+            else
+            {
+                int distanceLevel = GetDistanceLevel(node);
+                if(distanceLevel >= 0 && distanceLevel < NumLevels)
                 {
-                    if(!buckets[distanceLevel].Any(x => x.CompareNodeId(node))) // .Contains(node)
+                    if(buckets[distanceLevel].Count <= BucketSize)
                     {
-                        Console.WriteLine("Add node to bucket " + distanceLevel + " - " + node.ToString());
-                        buckets[distanceLevel].Add(node);
-                        NumberOfNodes++;
+                        if(!buckets[distanceLevel].Any(x => x.CompareNodeId(node))) // .Contains(node)
+                        {
+                            Console.WriteLine("Add node to bucket " + distanceLevel + " - " + node.ToString());
+                            buckets[distanceLevel].Add(node);
+                            NumberOfNodes++;
+                        }
                     }
+                    else
+                        throw new Exception($"Bucket {distanceLevel} is full");
                 }
-                else
-                    throw new Exception($"Bucket {distanceLevel} is full");
+            }
+        }
+
+        private void UpdateNode(KademliaNode node)
+        {
+            var nodes = GetNodeOrClosestNodes(node);
+            if(nodes.Count != 1)
+                return;
+            KademliaNode nodeToUpdate = nodes.First();
+            if(node.CompareTo(nodeToUpdate) == 0)
+            {
+                for(int i = 0; i < node.PublicKey.Length; i++)
+                {
+                    if(node.PublicKey[i] != nodeToUpdate.PublicKey[i])
+                        return;
+                }
+                if(nodeToUpdate.IpAddress != node.IpAddress || nodeToUpdate.Port != node.Port)
+                {
+                    nodeToUpdate.IpAddress = node.IpAddress;
+                    nodeToUpdate.Port = node.Port;
+                    Console.WriteLine("Node updated " + nodeToUpdate.ToString());
+                }
             }
         }
 
@@ -85,13 +115,15 @@ namespace Kademlia
             int distanceLevel = GetDistanceLevel(node);
             if(distanceLevel >= 0 && distanceLevel < NumLevels)
             {
-                if(!buckets[distanceLevel].Any(x => x.CompareNodeId(node)))
+                if(buckets[distanceLevel].Any(x => x.CompareNodeId(node)))
                 {
                     return true;
                 }
             }
             return false;
         }
+
+        public bool Contains(KademliaNode node) => Contains(node.NodeId);
 
         public void RemoveNode(KademliaNode node)
         {
@@ -121,7 +153,7 @@ namespace Kademlia
             return NumLevels - 1 - i;
         }
 
-        public List<KademliaNode> GetClosestNodes(KademliaNode node, int numberOfNodes)
+        public List<KademliaNode> GetClosestNodes(KademliaNode node, int numberOfNodes = 3)
         {
             List<KademliaNode> closestNodes = new List<KademliaNode>();
             int distanceLevel = GetDistanceLevel(node);
@@ -142,9 +174,10 @@ namespace Kademlia
             return closestNodes.OrderBy(x => x.CalculateXorDistance(node), new ByteListComparer()).Take(numberOfNodes).ToList();
         }
 
-        public List<KademliaNode> GetNodeOrClosestNodes(KademliaNode node, int numberOfNodes)
+        public List<KademliaNode> GetNodeOrClosestNodes(KademliaNode node, int numberOfNodes = 3)
         {
             var nodes = this.GetClosestNodes(node, numberOfNodes);
+            if(nodes.Count > 0)
             if(nodes[0].CompareNodeId(node))  // if is node address is closest node on position 0
             {
                 return new List<KademliaNode>(){nodes[0]};
