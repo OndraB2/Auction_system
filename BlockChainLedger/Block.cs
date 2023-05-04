@@ -5,6 +5,10 @@ using System.Security.Cryptography;
 using System.Text;
 using Kademlia;
 
+using System.Globalization;
+using System.Numerics;
+using System.Text.Json.Serialization;
+
 namespace BlockChainLedger{
     class Block
     {
