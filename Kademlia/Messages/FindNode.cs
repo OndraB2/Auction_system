@@ -7,7 +7,7 @@ namespace Kademlia
 {
     class FindNode : Message
     {
-        public List<KademliaNode> ?Neighbours;
+        public List<KademliaNode> ?Neighbours; // test
         public KademliaNode WantedNode;
         public static event EventHandler ?OnReceiveRegistrations;
 
