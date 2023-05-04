@@ -8,7 +8,7 @@ namespace AuctionSystem
   {
     public static string mode;
     public static string homeFolder;
-    //static ManualResetEvent _quitEvent = new ManualResetEvent(false); // test
+    //static ManualResetEvent _quitEvent = new ManualResetEvent(false);
     static void Main(string[] args)
     {
       // Console.CancelKeyPress += (sender, eArgs) => {
