@@ -8,11 +8,12 @@ num_instances=5
 
 # linux
 # Loop through the number of instances and open a new terminal window for each
-#gnome-terminal --tab --title="Instance $i" --command="$command_to_run BootstrapNode"
-#for i in $(seq 1 $num_instances)
-#do
-#  gnome-terminal --tab --title="Instance $i" --command="$command_to_run Client"
-#done
+# gnome-terminal --tab --title="Instance 0" --command="$command_to_run BootstrapNode ./terminalInstantions/0/"
+# sleep 3
+# for i in $(seq 1 $num_instances)
+# do
+#  gnome-terminal --tab --title="Instance $i" --command="$command_to_run Client ./terminalInstantions/$i/" 
+# done
 
 # wsl
 cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
