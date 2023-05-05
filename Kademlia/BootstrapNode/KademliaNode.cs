@@ -99,6 +99,11 @@ namespace Kademlia
             return node.NodeId.SequenceEqual(this.NodeId);
         }
 
+        public bool ComparePublicKey(KademliaNode node)
+        {
+            return node.PublicKey.SequenceEqual(this.PublicKey);
+        }
+
         public byte[] CalculateXorDistance(KademliaNode node)
         {
             byte[] distance = new byte[20];

@@ -51,12 +51,16 @@ namespace Kademlia
             var settings = new JsonSerializerSettings();
             settings.TypeNameHandling = TypeNameHandling.All;
             message = JsonConvert.DeserializeObject(Convert.ToString(wrapper.Message), messageType, settings);
+            
+            //if(!P2PUnit.Instance.RoutingTable.GetNodeOrClosestNodes(message.SenderNode).First().ComparePublicKey())
+            // return;
 
             if(EncriptionActivated && wrapper.MessageType != typeof(Connect).FullName && P2PUnit.Instance.RoutingTable.NumberOfNodes > 1)
             {
                 using (var rsa = new RSACryptoServiceProvider())
                 {
-                    rsa.ImportRSAPublicKey(wrapper.SenderNode.PublicKey, out int _);
+                    //rsa.ImportRSAPublicKey(wrapper.SenderNode.PublicKey, out int _);
+                    rsa.ImportRSAPublicKey(P2PUnit.Instance.RoutingTable.GetNodeOrClosestNodes(wrapper.SenderNode).First().PublicKey, out int _);
                     byte[] hash = (message as Message).ComputeHash();
                     bool valid = rsa.VerifyHash(hash, wrapper.Signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
                     if(!valid)

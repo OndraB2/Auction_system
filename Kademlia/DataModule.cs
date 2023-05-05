@@ -43,6 +43,7 @@ namespace Kademlia
                         builder.Append('.');
                     }
                     Console.WriteLine($"saving block " + builder.ToString());
+                    Console.WriteLine($"---------------------------------------------------------------------------------");
                 }
                 else
                 {

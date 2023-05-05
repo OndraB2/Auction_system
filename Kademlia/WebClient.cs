@@ -69,8 +69,9 @@ namespace Kademlia
                     {
                         try
                         {
+                            
+                            P2PUnit.Instance.RoutingTable.AddNode(wrapper.SenderNode);
                             Message message = Serializer.Deserialize(wrapper);
-                            P2PUnit.Instance.RoutingTable.AddNode(message.SenderNode);
                             new Thread(() => message.OnReceive()).Start();
                         }
                         catch(Exception ex)
