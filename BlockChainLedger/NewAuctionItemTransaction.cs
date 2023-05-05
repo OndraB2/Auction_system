@@ -2,8 +2,8 @@ namespace BlockChainLedger{
     class NewAuctionItemTransaction : Transaction
     {
         public string ItemName;
-        double StartingBid;
-        double FinalBid;
+        public double StartingBid;
+        public double FinalBid;
 
         public NewAuctionItemTransaction(double tid, DateTime timestamp, double auctionItemId, byte[] auctionOwnerId, string itemName, double startingBid, double finalBid) : base(tid, timestamp, auctionItemId, auctionOwnerId)
         {

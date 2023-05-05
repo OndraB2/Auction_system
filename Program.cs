@@ -59,7 +59,7 @@ namespace AuctionSystem
         Task.Delay(1000);
         byte[] id = new byte[20];
         id = Block.Increment(id);
-        node.FindValue(id);
+        node.SendFindValue(id);
         //var xxxxx = DataModule.Instance.database;
 
         DataModuleAPI dmapi = new DataModuleAPI(node);

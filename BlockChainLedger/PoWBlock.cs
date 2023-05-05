@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json.Serialization;
 using Kademlia;
+using Newtonsoft.Json;
 
 namespace BlockChainLedger
 {
@@ -41,24 +41,5 @@ namespace BlockChainLedger
             this.Hash = hash;
             this.Nonce = nonce;
         }
-
-        private byte[] ToByteArray(int nonce, byte[] transactionsBytes)
-        {
-            using(MemoryStream stream = new MemoryStream())
-            using(BinaryWriter writer = new BinaryWriter(stream))
-            {
-                writer.Write(Rank);
-                writer.Write(HashOfPrevious);
-                writer.Write(Difficulty);
-                writer.Write(transactionsBytes);
-                writer.Write(nonce);
-                writer.Write(MinerId.ToByteArray());
-                //writer.Write(Encoding.UTF8.GetBytes(MyString));
-
-                return stream.ToArray();
-            }
-        }
-
-        
     }
 }

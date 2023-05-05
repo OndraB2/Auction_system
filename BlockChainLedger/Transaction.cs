@@ -22,7 +22,7 @@ namespace BlockChainLedger{
             using(BinaryWriter writer = new BinaryWriter(stream))
             {
                 writer.Write(TID);
-                writer.Write(TimeStamp.ToBinary());
+                //writer.Write(TimeStamp.ToBinary());
                 writer.Write(AuctionItemId);
                 writer.Write(AuctionOwnerId);
                 return stream.ToArray();

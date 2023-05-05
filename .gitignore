@@ -3,3 +3,4 @@ obj/
 logs/*.txt
 /aktualniInstance/
 /terminalInstantions/
+*.sh
