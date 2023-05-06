@@ -144,7 +144,7 @@ namespace AuctionServer
                     ActiveAuctions.AddAuction(auction1);
                 }
 
-                Thread.Sleep(3000);
+                Thread.Sleep(10000);
 
                 ActiveAuctions.NewBid(auction2, a2_Bbid, Guid.NewGuid().ToByteArray());
                 if(ActiveAuctions.GetAuction(auction2) is null)
@@ -153,7 +153,7 @@ namespace AuctionServer
                     ActiveAuctions.AddAuction(auction2);
                 }
 
-                Thread.Sleep(3000);
+                Thread.Sleep(1000);
                 System.Console.WriteLine("Transactin count: " + TransactionPool.GetTransactions().Count);
 
             }

@@ -148,10 +148,20 @@ namespace Kademlia
         public Block GetLastBlock()
         {
             byte[] lastBlockId = FindLastBlockId();
-            return DataModule.Instance.Get(lastBlockId);
+            if(!IsFirstBlock(lastBlockId))
+                return DataModule.Instance.Get(lastBlockId);
+            else return new Block(0, "", 3, new List<Transaction>(), P2PUnit.Instance.NodeId);
         }
 
-        
+        private bool IsFirstBlock(byte[] lastBlockId)
+        {
+            for(int i = 0; i < lastBlockId.Count(); i++)
+            {
+                if(lastBlockId[i] != 0)
+                    return false;
+            }
+            return true;
+        }
 
         private List<byte[]> GetLastNBlockIds(int n)
         {

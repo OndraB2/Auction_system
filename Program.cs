@@ -59,14 +59,15 @@ namespace AuctionSystem
       //   RoutingTableTest();
         ClientNode node = new ClientNode();
         node.Start();
-        Block b = new PowBlock(1, "", 3, new List<Transaction>(){
-          new NewAuctionItemTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId,"item 1", 20,50), 
-          new NewAuctionItemTransaction(2,DateTime.Now, 2, P2PUnit.Instance.NodeId.NodeId,"item 2", 20,50),
-          new NewItemBidTransaction(3,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25),
-          new EndOfAuctionTransaction(4,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25)
-          }, P2PUnit.Instance.NodeId);
-        b.Mine();
-        node.SendStore(b);
+        var testTransaction = new NewItemBidTransaction(Guid.NewGuid(),DateTime.Now, Guid.NewGuid(), P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25);
+        // Block b = new PowBlock(1, "", 3, new List<Transaction>(){ 
+        //   new NewAuctionItemTransaction(Guid.NewGuid(),DateTime.Now, Guid.NewGuid(), P2PUnit.Instance.NodeId.NodeId,"item 1", 20,50),
+        //   new NewAuctionItemTransaction(Guid.NewGuid(),DateTime.Now, Guid.NewGuid(), P2PUnit.Instance.NodeId.NodeId,"item 2", 20,50),
+        //   testTransaction,
+        //   new EndOfAuctionTransaction(Guid.NewGuid(),DateTime.Now, Guid.NewGuid(), P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25)
+        //   }, P2PUnit.Instance.NodeId);
+        // b.Mine();
+        // node.SendStore(b);
         Task.Delay(1000);
         byte[] id = new byte[20];
         id = Block.Increment(id);
@@ -75,7 +76,7 @@ namespace AuctionSystem
 
         DataModuleAPI dmapi = new DataModuleAPI(node);
         var ttt = dmapi.FindLastBlockId();
-        var tttt = dmapi.IsTransactionAlreadyInBlock(new NewItemBidTransaction(1,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25));
+        var tttt = dmapi.IsTransactionAlreadyInBlock(testTransaction);
         var ttttt = dmapi.FindActiveAuctions();
 
         // test ping
@@ -91,7 +92,7 @@ namespace AuctionSystem
       while(true)
       {
         miner.MineNewBlock();
-        await Task.Delay(new Random().Next(500, 10000));
+        await Task.Delay(new Random().Next(15000, 25000));
       }
     }
 
