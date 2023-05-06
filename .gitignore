@@ -3,4 +3,5 @@ obj/
 logs/*.txt
 /aktualniInstance/
 /terminalInstantions/
-*.sh
+Program.cs
+run.sh
