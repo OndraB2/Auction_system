@@ -39,13 +39,16 @@ namespace BlockChainLedger
             List<Transaction>? transactions = LoadTransactions();
             if(transactions == null)
                 return;
+            Console.WriteLine($"transactions from Application server loaded {transactions.Count}");
             Block previousBlock = dataModuleAPI.GetLastBlock();
             if(previousBlock != null)
             {
                 Block b = new PowBlock(previousBlock, previousBlock.Difficulty,transactions, P2PUnit.Instance.NodeId);
                 b.Mine();
                 Node.SendStore(b);
+                Console.WriteLine("Block send to validation ###################################################");
             }
+
         }
 
         private ManualResetEvent AuctionServerTransactionsResetEvent = new ManualResetEvent(false);

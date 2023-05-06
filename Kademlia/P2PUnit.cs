@@ -120,6 +120,11 @@ namespace Kademlia
             client.Send(BootstrapNode.IpAddress, BootstrapNode.Port, message);
         }
 
+        public void SendMessageToSpecificNode(Message message)
+        {
+            client.Send(message.DestinationNode.IpAddress, message.DestinationNode.Port, message);
+        }
+
         public void Redirect(MessageWrapper wrapper)
         {
             Send(wrapper);

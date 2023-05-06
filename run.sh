@@ -4,7 +4,7 @@
 command_to_run="dotnet run ./bin/Debug/net7.0/Auction_System"
 
 # Define the number of instances to run
-num_instances=5
+num_instances=4
 
 # linux
 # Loop through the number of instances and open a new terminal window for each
@@ -21,6 +21,8 @@ for i in $(seq 1 $num_instances)
 do
  cmd.exe /c start "Instance $i" wsl $command_to_run Client ./terminalInstantions/$i/  
 done
+
+#cmd.exe /c start "Instance 5" wsl $command_to_run Client ./terminalInstantions/$i/ miner
 
 # vypis do souboru
 # $command_to_run BootstrapNode > ./logs/instance0.txt &

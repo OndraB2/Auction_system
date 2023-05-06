@@ -6,7 +6,7 @@ namespace BlockChainLedger{
         public byte[] TransactionOwnerId;
         public double Amount;
 
-        public EndOfAuctionTransaction(double tid, DateTime timestamp, double auctionItemId, byte[] auctionOwnerId, byte[] transactionOwnerId, double amount) : base(tid, timestamp, auctionItemId, auctionOwnerId)
+        public EndOfAuctionTransaction(Guid tid, DateTime timestamp, Guid auctionItemId, byte[] auctionOwnerId, byte[] transactionOwnerId, double amount) : base(tid, timestamp, auctionItemId, auctionOwnerId)
         {
             TransactionOwnerId = transactionOwnerId;
             Amount = amount;
@@ -27,6 +27,21 @@ namespace BlockChainLedger{
         public override byte[] GetHash()
         {
             return sha256.ComputeHash(this.ToByteArray());
+        }
+
+        public override void Print()
+        {
+            base.Print();
+            System.Console.WriteLine(TransactionOwnerId);
+            System.Console.WriteLine(Amount);
+        }
+        static public EndOfAuctionTransaction GetRandom(Guid auctionItemId, byte[] auctionOwnerId, double amount, byte[] bidderId)
+        {
+            Random rand = new Random();
+            Guid tid = Guid.NewGuid();
+            DateTime timestamp = DateTime.Now;
+
+            return new EndOfAuctionTransaction(tid, timestamp, auctionItemId, auctionOwnerId, bidderId, amount);
         }
     }
 }
