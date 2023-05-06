@@ -51,5 +51,18 @@ namespace Kademlia
             message.IsResponse = true;
             return message;
         }
+
+        public static AuctionServerTransactions GetAuctionServerTransactions(KademliaNode senderNode, KademliaNode destinationNode)
+        {
+            return new AuctionServerTransactions(senderNode, destinationNode);
+        }
+
+        public static AuctionServerTransactions GetAuctionServerTransactionsResponse(AuctionServerTransactions request, List<Transaction> transactions)
+        {
+            var message = new AuctionServerTransactions(request.DestinationNode, request.SenderNode);
+            message.Transactions = transactions;
+            message.Response = true;
+            return message;
+        }
     }
 }

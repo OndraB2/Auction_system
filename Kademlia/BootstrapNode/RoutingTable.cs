@@ -30,7 +30,7 @@ namespace Kademlia
         {
             this.applicationNode = applicationNode;
 
-            PingTimer = new Timer(new TimerCallback(TestActiveNodes), null, 10000, 60000);
+            PingTimer = new Timer(new TimerCallback(TestActiveNodes), null, 60000, 120000);
         }
 
         private void TestActiveNodes(object ?state)

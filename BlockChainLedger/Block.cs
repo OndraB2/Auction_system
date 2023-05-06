@@ -1,13 +1,9 @@
 using System.Globalization;
 using System.Numerics;
-using System.Text.Json.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using Kademlia;
-
-using System.Globalization;
-using System.Numerics;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace BlockChainLedger{
     class Block
@@ -23,7 +19,6 @@ namespace BlockChainLedger{
 
         public Block(int rank, string hashOfPrevious, int difficulty, List<Transaction> transactions, KademliaNode minerId)
         {
-            var tt = BitConverter.GetBytes(rank);
             BitConverter.GetBytes(rank).Reverse().ToArray().CopyTo(this.Rank, 16);
             this.HashOfPrevious = hashOfPrevious;
             this.Difficulty = difficulty;
@@ -35,7 +30,8 @@ namespace BlockChainLedger{
 
         public Block(Block previousBlock, int difficulty, List<Transaction> transactions, KademliaNode minerId)
         {
-            this.Rank = Increment(previousBlock.Rank);
+            byte[] rank = previousBlock.Rank.Clone() as byte[];
+            this.Rank = Increment(rank);
             this.HashOfPrevious = previousBlock.Hash;
             this.Difficulty = difficulty;
             this.Transactions = transactions;
@@ -109,7 +105,7 @@ namespace BlockChainLedger{
         protected byte[] GetTransactionsHash()
         {
             if(this.Transactions.Count > 0)
-                return sha256.ComputeHash(GetTransactionsHash(0, this.Transactions.Count - 1));
+                return GetTransactionsHash(0, this.Transactions.Count - 1);  // sha256.ComputeHash(
             return new byte[]{};
         }
 
@@ -142,5 +138,28 @@ namespace BlockChainLedger{
             return sBuilder.ToString();
         }
         public static string GetHash(string data) => GetHash(Encoding.UTF8.GetBytes(data));
+
+        protected byte[] ToByteArray(int nonce, byte[] transactionsBytes)
+        {
+            using(MemoryStream stream = new MemoryStream())
+            using(BinaryWriter writer = new BinaryWriter(stream))
+            {
+                writer.Write(Rank);
+                writer.Write(HashOfPrevious);
+                writer.Write(Difficulty);
+                writer.Write(transactionsBytes);
+                writer.Write(nonce);
+                writer.Write(MinerId.ToByteArray());
+                //writer.Write(Encoding.UTF8.GetBytes(MyString));
+
+                return stream.ToArray();
+            }
+        }
+
+        public bool IsHashValid()
+        {
+            string hash = GetHash(ToByteArray(this.Nonce, GetTransactionsHash()));
+            return hash == this.Hash;
+        }
     }
 }

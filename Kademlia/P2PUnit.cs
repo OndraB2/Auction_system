@@ -8,6 +8,7 @@ namespace Kademlia
 {
     class P2PUnit{
         public KademliaNode NodeId { get; private set;}  // 160 bitu
+        public KademliaNode BootstrapNode {get; set;}
         public RSA EncryptionKeys;
         public RoutingTable RoutingTable;
         public string IpAddress {get; private set;}
@@ -108,10 +109,15 @@ namespace Kademlia
             string bootstrapIp;
             int port;
             (bootstrapIp, port) = BootstrapNodeIpAddressApi.GetBootstrapIpAddress();
-            KademliaNode bootstrapNode = new KademliaNode(new byte[20], bootstrapIp, port);
-            Connect connect = new Connect(localNode, bootstrapNode);
+            BootstrapNode = new KademliaNode(new byte[20], bootstrapIp, port);
+            Connect connect = new Connect(localNode, BootstrapNode);
+            connect.CaptchaValidation();
             client.Send(bootstrapIp, port, connect);
-            
+        }
+
+        public void SendMessageToBootstrapNode(Message message)
+        {
+            client.Send(BootstrapNode.IpAddress, BootstrapNode.Port, message);
         }
 
         public void Redirect(MessageWrapper wrapper)

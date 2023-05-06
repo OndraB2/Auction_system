@@ -18,6 +18,11 @@ namespace AuctionSystem
       // _quitEvent.WaitOne();
       mode = "";
       homeFolder = "./aktualniInstance/";
+      string typeOfNode = "";
+      if(args.Length>3)
+      {
+        typeOfNode = args[3];
+      }
       if(args.Length>2)
       {
         mode = args[1];
@@ -37,6 +42,12 @@ namespace AuctionSystem
         {
           ClientNode node = new ClientNode();
           node.Start();
+          if(typeOfNode == "miner")
+          {
+            Console.WriteLine("Is miner");
+            Miner miner = new Miner(node);
+            Mining(miner);
+          }
         }
       }
       else
@@ -55,11 +66,11 @@ namespace AuctionSystem
           new EndOfAuctionTransaction(4,DateTime.Now, 1, P2PUnit.Instance.NodeId.NodeId, P2PUnit.Instance.NodeId.NodeId, 25)
           }, P2PUnit.Instance.NodeId);
         b.Mine();
-        node.Store(b);
+        node.SendStore(b);
         Task.Delay(1000);
         byte[] id = new byte[20];
         id = Block.Increment(id);
-        node.FindValue(id);
+        node.SendFindValue(id);
         //var xxxxx = DataModule.Instance.database;
 
         DataModuleAPI dmapi = new DataModuleAPI(node);
@@ -73,6 +84,15 @@ namespace AuctionSystem
         Console.WriteLine(node.SendPing(testNode)? "ping ok" : "ping false");
       }
       Console.ReadLine();
+    }
+
+    static async void Mining(Miner miner)
+    {
+      while(true)
+      {
+        miner.MineNewBlock();
+        await Task.Delay(new Random().Next(500, 10000));
+      }
     }
 
 

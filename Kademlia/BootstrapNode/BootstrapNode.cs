@@ -46,11 +46,15 @@ namespace Kademlia
 
         private void NewClientConnected(object ?sender, EventArgs args)
         {
-            // pridat jeho adresu
             if(sender != null && sender is Connect)
             {
                 Connect connect = sender as Connect;
                 Console.WriteLine($"New Connection {connect.SenderNode}");
+                if(!connect.CaptchaCheck())
+                {
+                    Console.WriteLine("Invalid captcha hash");
+                    return;
+                }
                 P2PUnit.Instance.RoutingTable.AddNode(connect.SenderNode);
 
                 List<KademliaNode> neighbours = GetClosestNeighbours(connect.SenderNode);

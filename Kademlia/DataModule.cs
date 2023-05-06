@@ -23,14 +23,19 @@ namespace Kademlia
             database = new Dictionary<byte[], Block>(new ByteArrayComparer());
         }
 
-        private static object _lock = new object();    
-        public void Store(Block block)
-        {
-            lock(_lock)
-            {
-                if(!database.ContainsKey(block.Rank))
-                {
+        public static DataModuleAPI? dataModuleAPI;
 
+        private static object _lock = new object();    
+        public void Store(Block block, bool checkValidity = true)
+        {
+            if(!database.ContainsKey(block.Rank))
+            {
+                if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))
+                {
+                    lock(_lock)
+                    {  
+                        database.Add(block.Rank, block);
+                    }
                     StringBuilder builder = new StringBuilder();
                     foreach(var b in block.Rank)
                     {
@@ -38,8 +43,11 @@ namespace Kademlia
                         builder.Append('.');
                     }
                     Console.WriteLine($"saving block " + builder.ToString());
-                    
-                    database.Add(block.Rank, block);
+                    Console.WriteLine($"---------------------------------------------------------------------------------");
+                }
+                else
+                {
+                    Console.WriteLine("Block is not valid");
                 }
             }
         }
@@ -76,7 +84,7 @@ namespace Kademlia
 
                     return blockIds.Last().Clone() as byte[];
                 }
-                return new byte[20];
+                return new byte[20] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
             }
         }
     }
