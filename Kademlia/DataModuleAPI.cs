@@ -126,6 +126,14 @@ namespace Kademlia
                 return false;
             }
 
+            // check block not exist
+            byte[] lastBlockId = FindLastBlockId();
+            if(lastBlockId.SequenceEqual(block.Rank))
+            {
+                Console.WriteLine("Block with same id already exists");
+                return false;
+            }
+
             // check transactions not in existing blocks
             Console.WriteLine("Checking previous blocks start");
             if(IsTransactionAlreadyInBlock(block.Transactions))
@@ -135,6 +143,12 @@ namespace Kademlia
             }
             Console.WriteLine("Checking previous blocks end");
             return true;
+        }
+
+        public Block GetLastBlock()
+        {
+            byte[] lastBlockId = FindLastBlockId();
+            return DataModule.Instance.Get(lastBlockId);
         }
 
         

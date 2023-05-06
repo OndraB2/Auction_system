@@ -19,7 +19,6 @@ namespace BlockChainLedger{
 
         public Block(int rank, string hashOfPrevious, int difficulty, List<Transaction> transactions, KademliaNode minerId)
         {
-            var tt = BitConverter.GetBytes(rank);
             BitConverter.GetBytes(rank).Reverse().ToArray().CopyTo(this.Rank, 16);
             this.HashOfPrevious = hashOfPrevious;
             this.Difficulty = difficulty;
@@ -31,7 +30,8 @@ namespace BlockChainLedger{
 
         public Block(Block previousBlock, int difficulty, List<Transaction> transactions, KademliaNode minerId)
         {
-            this.Rank = Increment(previousBlock.Rank);
+            byte[] rank = previousBlock.Rank.Clone() as byte[];
+            this.Rank = Increment(rank);
             this.HashOfPrevious = previousBlock.Hash;
             this.Difficulty = difficulty;
             this.Transactions = transactions;

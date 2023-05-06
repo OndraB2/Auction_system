@@ -93,7 +93,7 @@ namespace AuctionSystem
 
     
 
-        protected void FindNodeReceived(object ?sender, EventArgs args)  // RoutingTableReceived
+        protected virtual void FindNodeReceived(object ?sender, EventArgs args)  // RoutingTableReceived
         {
             if(sender != null && sender is FindNode)
             {
@@ -140,7 +140,7 @@ namespace AuctionSystem
             }
         }
 
-        public void Store(Block block)
+        public void SendStore(Block block)
         {
             if(!P2PUnit.Instance.RoutingTable.Contains(block.Rank))
                 SendFindNode(block.Rank, true);
@@ -148,6 +148,9 @@ namespace AuctionSystem
             P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetStore(P2PUnit.Instance.NodeId, tmpDest, block), 3);
 
             // timer and send again
+            Timer timer = new Timer(new TimerCallback((_) => {
+                  P2PUnit.Instance.SendToClosestNeighbours(MessageFactory.GetStore(P2PUnit.Instance.NodeId, tmpDest, block), 3);
+            }), null, 60000, Timeout.Infinite);
         }
 
         public bool SendFindValue(byte[] id, int n = 10)

@@ -18,5 +18,23 @@ namespace AuctionSystem
 
             Thread.Sleep(500);  // watiting for connection established
         }
+
+        private bool FirstFindNodeResponse = true;
+
+        protected override void FindNodeReceived(object? sender, EventArgs args)
+        {
+            base.FindNodeReceived(sender, args);
+            // save bootstrap node
+            if(FirstFindNodeResponse)
+            if(sender != null && sender is FindNode)
+            {
+                FindNode findNode = sender as FindNode;
+                if(findNode.Neighbours != null)
+                {
+                    P2PUnit.Instance.BootstrapNode = findNode.SenderNode;
+                }
+                FirstFindNodeResponse = false;
+            }
+        }
     }
 }
