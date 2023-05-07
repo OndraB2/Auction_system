@@ -1,5 +1,5 @@
 namespace BlockChainLedger{
-    class NewItemBidTransaction : Transaction
+    public class NewItemBidTransaction : Transaction
     {
         public byte[] TransactionOwnerId;
         public double Amount;
