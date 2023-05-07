@@ -20,6 +20,7 @@ namespace AuctionServer{
         {
             Auction auction = new Auction(auctionTransaction, auctionTransaction.GetStartingBid(), auctionTransaction.GetFinalBid());
             AuctionsList.Add(auction);
+            TransactionPool.AddTransactionToPool(auctionTransaction);
             System.Console.WriteLine("New Auction: " + auctionTransaction.TID);
             System.Console.WriteLine("StartingBid: " + auctionTransaction.GetStartingBid() + ", FinalBid: " + auctionTransaction.GetFinalBid());
 

@@ -109,6 +109,7 @@ namespace AuctionSystem
                         BidToAuction(subscribedAuction.Value, lastPrice + 5);
                     else
                         BidToAuction(subscribedAuction.Value, new Random().Next(10, 40));
+                    BuyingResetEvent.WaitOne(60000);
                 }
             }
         }
@@ -122,20 +123,24 @@ namespace AuctionSystem
                 var message = sender as AuctionServerNewTransaction;
                 if(message.Response)
                 {
+                    Console.WriteLine("new transaction response received");
                     var transaction = message.Transaction;
                     subscribedTransactions.Add(transaction);
                     if(transaction is NewItemBidTransaction)
                     {
+                        Console.WriteLine("new bid transaction");
                         lastPrice = (transaction as NewItemBidTransaction).Amount;
                     }
                     if(transaction is EndOfAuctionTransaction)
                     {
+                        Console.WriteLine("new end of auction transaction");
                         if(subscribedAuction!=null)
                         if(subscribedAuction == (transaction as EndOfAuctionTransaction).AuctionItemId)
                         { 
                             lastPrice = -1;
                             subscribedAuction = null;
                             lastSubscribedAuction = null;
+                            BuyingResetEvent.Set();
                         }
                         if(sellTransactions != null)
                         if(sellTransactions.AuctionItemId == (transaction as EndOfAuctionTransaction).AuctionItemId)

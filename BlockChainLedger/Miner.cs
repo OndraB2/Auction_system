@@ -38,7 +38,10 @@ namespace BlockChainLedger
         {
             List<Transaction>? transactions = LoadTransactions();
             if(transactions == null)
+            {
+                Console.WriteLine("No transactions from application server");
                 return;
+            }
             Console.WriteLine($"transactions from Application server loaded {transactions.Count}");
             Block previousBlock = dataModuleAPI.GetLastBlock();
             if(previousBlock != null)

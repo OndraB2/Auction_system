@@ -96,15 +96,6 @@ namespace AuctionServer
 
         static public void RemoveConfirmedTransactionFromPool()
         {
-            List<Transaction> ActiveTransactionsList_Copy = new List<Transaction>(ActiveTransactionsList);
-            for(int i = 0; i < ActiveTransactionsList_Copy.Count; i++)
-            {
-                if(DataModuleAPIinstance.IsTransactionAlreadyInBlock(ActiveTransactionsList_Copy[i]))
-                {
-                    ActiveTransactionsList.RemoveAt(i);
-                }
-
-            }
         }
 
         static public void PrintTransactions()
@@ -114,15 +105,15 @@ namespace AuctionServer
                 (t as Transaction).Print();
             }
         }
-        static public void AddTransactionToPool(object transaction)
+        static public void AddTransactionToPool(Transaction transaction)
         {
-            ActiveTransactionsList.Add(transaction as Transaction);
+            ActiveTransactionsList.Add(transaction);
         }
         static public List<Transaction> GetTransactions()
         {
             // user.Transactions = ActiveTransactionsList;
             // UsersList.Add(user);
-            // AddTransactionsGroupToBeingConfirmedList(new List<Transaction>(ActiveTransactionsList));
+            AddTransactionsGroupToBeingConfirmedList(new List<Transaction>(ActiveTransactionsList));
             return ActiveTransactionsList;
         }
 
@@ -134,6 +125,11 @@ namespace AuctionServer
             // AddTransactionsGroupToBeingConfirmedList(N_FirstTransactions);
 
             return N_FirstTransactions;
+        }
+
+        static public void RemoveConfirmedTransactionsFromPool()
+        {
+            
         }
 
         static public void GenerateTraffic()
