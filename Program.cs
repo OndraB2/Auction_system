@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using BlockChainLedger;
 using Kademlia;
 
@@ -32,6 +33,8 @@ namespace AuctionSystem
         mode = args[0];
       if(mode != "")
       {
+        Console.SetOut(new PrefixedWriter());
+
         Console.WriteLine($"Running {mode}");
         if(mode=="BootstrapNode")
         {
@@ -52,6 +55,8 @@ namespace AuctionSystem
       }
       else
       {
+        
+        Console.SetOut(new PrefixedWriter());
       // Console.WriteLine("Hello World!");
       // //PoWBlockTest();
       // //P2PWebClientTest();
@@ -140,6 +145,34 @@ namespace AuctionSystem
     {
       BootstrapNode node = new BootstrapNode();
       node.Start();
+    }
+  }
+
+  class PrefixedWriter : TextWriter
+  { 
+    private TextWriter originalOut;
+
+    public PrefixedWriter()
+    {
+        File.WriteAllText(Program.homeFolder + "log.txt", String.Empty);
+        originalOut = Console.Out;
+    }
+
+    public override Encoding Encoding
+    {
+        get { return new System.Text.ASCIIEncoding(); }
+    }
+    public override void WriteLine(string message)
+    {
+      string str = String.Format("{0} {1}", DateTime.Now.ToString("hh:mm:ss.ffffff"), message);
+      File.AppendAllText(Program.homeFolder + "log.txt", str + "\n");
+      originalOut.WriteLine(str);
+    }
+    public override void Write(string message)
+    {
+      string str = String.Format("{0} {1}", DateTime.Now.ToString("hh:mm:ss.ffffff"), message);
+      File.AppendAllText(Program.homeFolder + "log.txt", str + "\n");
+      originalOut.Write(str);
     }
   }
 }

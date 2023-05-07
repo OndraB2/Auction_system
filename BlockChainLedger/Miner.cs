@@ -46,6 +46,7 @@ namespace BlockChainLedger
                 Block b = new PowBlock(previousBlock, previousBlock.Difficulty,transactions, P2PUnit.Instance.NodeId);
                 b.Mine();
                 Node.SendStore(b);
+                Console.WriteLine(b);
                 Console.WriteLine("Block send to validation ###################################################");
             }
 

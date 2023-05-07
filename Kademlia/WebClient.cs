@@ -20,6 +20,7 @@ namespace Kademlia
 
         public void Send(string ipAddressString, int port, Message message)
         {
+            Console.WriteLine($"Sending {message.GetType()} to {ipAddressString}:{port}");
             byte[] data = message.Serialize();
             Send(ipAddressString, port, data);
         }

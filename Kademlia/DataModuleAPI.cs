@@ -18,7 +18,7 @@ namespace Kademlia
             do
             {
                 localLastId = Block.Increment(localLastId);
-            }while(node.SendFindValue(localLastId, 3));
+            }while(node.SendFindValue(localLastId, 6));
             Console.WriteLine("found last block Id");
             return DataModule.Instance.GetLastBlockId();
         }

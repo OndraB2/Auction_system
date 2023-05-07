@@ -40,6 +40,7 @@ namespace AuctionSystem
                 // store to memory?
                 else if(findValue.DataBlock != null)
                 {
+                    Console.WriteLine("Value found storing value");
                     findValueReceived = findValue.DataBlock;
                     DataModule.Instance.Store(findValue.DataBlock, false);
                     findValueResetEvent.Set();

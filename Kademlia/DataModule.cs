@@ -28,9 +28,16 @@ namespace Kademlia
         private static object _lock = new object();    
         public void Store(Block block, bool checkValidity = true)
         {
+            // tmp debugging
+            if(checkValidity && block.MinerId.NodeId.SequenceEqual(P2PUnit.Instance.NodeId.NodeId))
+            {
+                Console.WriteLine("store debugging break");
+                return;
+            }
+            //
             if(!database.ContainsKey(block.Rank))
             {
-                if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))
+                if(true || !checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
                 {
                     lock(_lock)
                     {  
