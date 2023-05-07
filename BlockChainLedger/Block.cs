@@ -121,7 +121,10 @@ namespace BlockChainLedger{
 
         public override string ToString()
         {
-            return $"{Rank} {Hash} {HashOfPrevious} {Nonce} {Difficulty} {Timestamp} {Transactions.Count}";
+            string str = "";
+            foreach(var b in Rank)
+                str+=b+".";
+            return $"{str} - {Hash} {HashOfPrevious} {Nonce} {Difficulty} {Timestamp} {Transactions.Count}";
         }
 
         private static readonly SHA256 sha256 = SHA256.Create();

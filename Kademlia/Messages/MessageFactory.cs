@@ -64,5 +64,22 @@ namespace Kademlia
             message.Response = true;
             return message;
         }
+
+        public static AuctionServerNewTransaction GetAuctionServerNewTransaction(KademliaNode senderNode, KademliaNode destinationNode, Transaction transaction)
+        {
+            return new AuctionServerNewTransaction(senderNode, destinationNode, transaction);
+        }
+
+        public static AuctionServerNewTransaction GetAuctionServerNewTransactionResponse(KademliaNode senderNode, KademliaNode destinationNode, Transaction transaction)
+        {
+            var message = new AuctionServerNewTransaction(senderNode, destinationNode, transaction);
+            message.Response = true;
+            return message;
+        }
+
+        public static AuctionServerSubscribe GetAuctionServerSubscribe(KademliaNode senderNode, KademliaNode destinationNode, Guid auctionId)
+        {
+            return new AuctionServerSubscribe(senderNode, destinationNode, auctionId);
+        }
     }
 }
