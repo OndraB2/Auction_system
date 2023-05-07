@@ -96,6 +96,15 @@ namespace AuctionServer
 
         static public void RemoveConfirmedTransactionFromPool()
         {
+            List<Transaction> ActiveTransactionsList_Copy = new List<Transaction>(ActiveTransactionsList);
+            for(int i = 0; i < ActiveTransactionsList_Copy.Count; i++)
+            {
+                if(DataModuleAPIinstance.IsTransactionAlreadyInBlock(ActiveTransactionsList_Copy[i]))
+                {
+                    ActiveTransactionsList.RemoveAt(i);
+                }
+
+            }
         }
 
         static public void PrintTransactions()
