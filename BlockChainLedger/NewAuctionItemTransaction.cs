@@ -62,5 +62,24 @@ namespace BlockChainLedger{
 
             return new NewAuctionItemTransaction(tid, timestamp, auctionItemId, auctionOwnerId, itemName, startingBid, finalBid);
         }
+
+        static public NewAuctionItemTransaction GetRandom(byte[] auctionOwnerId)
+        {
+            Random rand = new Random();
+            Guid tid = Guid.NewGuid();
+            DateTime timestamp = DateTime.Now;
+            Guid auctionItemId = Guid.NewGuid();
+
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            string itemName = new string(Enumerable.Repeat(chars, 8)
+                .Select(s => s[rand.Next(s.Length)]).ToArray());
+            // double startingBid = rand.Next(0, 1000000);
+            // double finalBid = rand.Next(Convert.ToInt32(startingBid), Int32.MaxValue - Convert.ToInt32(startingBid) * 10 );
+            
+            double startingBid = 10000;
+            double finalBid = rand.Next(Convert.ToInt32(startingBid), 25000 );
+
+            return new NewAuctionItemTransaction(tid, timestamp, auctionItemId, auctionOwnerId, itemName, startingBid, finalBid);
+        }
     }
 }

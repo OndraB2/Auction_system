@@ -36,6 +36,18 @@ namespace AuctionServer{
             if(sender != null && sender is AuctionServerNewTransaction)
             {
                 // kontrola transakce viz ClientNode metoda NewTransactionReceived
+                if((sender as AuctionServerNewTransaction).Transaction is NewAuctionItemTransaction)
+                {
+                    ActiveAuctions.AddAuction(sender as NewAuctionItemTransaction);
+                }
+                else if((sender as AuctionServerNewTransaction).Transaction is NewItemBidTransaction)
+                {
+                    ActiveAuctions.NewBid(sender as NewItemBidTransaction);
+                }
+                else if((sender as AuctionServerNewTransaction).Transaction is EndOfAuctionTransaction)
+                {
+                    ActiveAuctions.EndOfAuctionByOwner(sender as EndOfAuctionTransaction);
+                }
             }
         }
 
@@ -43,7 +55,7 @@ namespace AuctionServer{
         {
             if(sender != null && sender is AuctionServerSubscribe)
             {
-
+                ActiveAuctions.AttachObserverToAuction((sender as AuctionServerSubscribe).AuctionId, (sender as AuctionServerSubscribe).SenderNode);
             }
         }
 

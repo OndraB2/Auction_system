@@ -5,7 +5,7 @@ using AuctionServer;
 
 namespace Kademlia
 {
-    public class KademliaNode : Observer, IComparable 
+    public class KademliaNode : IComparable 
     {
         public byte[] NodeId { get; set; }
         public string IpAddress { get; set; }
@@ -23,16 +23,6 @@ namespace Kademlia
             IpAddress = ipAddress;
             Port = port;
             PublicKey = publicKey;
-        }
-
-        public override void UpdateNewBid()
-        {
-            System.Console.WriteLine("update new bid");
-        }
-
-        public override void UpdateEndOfAcution()
-        {
-            System.Console.WriteLine("update end of auction");
         }
 
         public static KademliaNode CreateInstance(string ipAddress, int port)
