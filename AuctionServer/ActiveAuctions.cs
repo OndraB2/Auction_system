@@ -1,5 +1,6 @@
 using System;
 using BlockChainLedger;
+using Kademlia;
 
 namespace AuctionServer{
     static class ActiveAuctions
@@ -54,6 +55,21 @@ namespace AuctionServer{
                 auction.NewBid(NIBTransaction);
             }
         }
-
+        static public void EndOfAuctionByOwner(EndOfAuctionTransaction EOATransaction)
+        {
+            Auction? auction = GetAuction(EOATransaction.AuctionItemId);
+            if(auction is not null)
+            {
+                auction.EndOfAuctionByOwner(EOATransaction);
+            }
+        }
+        static public void AttachObserverToAuction(Guid auctionID, KademliaNode kNode)
+        {
+            Auction? auction = GetAuction(auctionID);
+            if(auction is not null)
+            {
+                auction.AttachNewObserver(new User(kNode));
+            }
+        }
     }
 }
