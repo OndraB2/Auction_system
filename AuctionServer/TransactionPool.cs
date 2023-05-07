@@ -29,6 +29,7 @@ namespace AuctionServer
         static public List<Transaction> ActiveTransactionsList = new List<Transaction>();
         // static public List<User> UsersList = new List<User>();
         static public List<SentGroupOfTransactions> CurrentlyBeingConfirmedTransactionsGroups = new List<SentGroupOfTransactions>();
+        static public DataModuleAPI DataModuleAPIinstance;
 
         static public bool CompareTwoTransactionsGroups(List<Transaction> group1, List<Transaction> group2)
         {
@@ -95,7 +96,6 @@ namespace AuctionServer
 
         static public void RemoveConfirmedTransactionFromPool()
         {
-
         }
 
         static public void PrintTransactions()
@@ -122,7 +122,7 @@ namespace AuctionServer
             List<Transaction> N_FirstTransactions = ActiveTransactionsList.Take(n).ToList();
             // user.Transactions = N_FirstTransactions;
             // UsersList.Add(user);
-            AddTransactionsGroupToBeingConfirmedList(N_FirstTransactions);
+            // AddTransactionsGroupToBeingConfirmedList(N_FirstTransactions);
 
             return N_FirstTransactions;
         }

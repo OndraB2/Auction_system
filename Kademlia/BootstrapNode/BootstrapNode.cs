@@ -20,7 +20,7 @@ namespace Kademlia
             SendIpToWebserver();
             // registrace k zprave connect
             Connect.OnReceiveRegistrations += NewClientConnected;
-            
+            TransactionPool.DataModuleAPIinstance = new DataModuleAPI(this);
             auctionServer = new AuctionServer.AuctionServer();
             auctionServer.Start();
         }

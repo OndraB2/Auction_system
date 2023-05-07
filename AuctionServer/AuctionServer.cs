@@ -11,10 +11,11 @@ namespace AuctionServer{
             AuctionServerSubscribe.OnReceiveRegistrations += this.AuctionServerSubscribeReceived;
             
             // thread generovani transakci
-            // Thread thread = new Thread(() => {
-            //     TransactionPool.GenerateTraffic();
-            // });
-            // thread.Start();
+            Thread thread = new Thread(() => {
+                TransactionPool.RemoveConfirmedTransactionFromPool();
+                Thread.Sleep(60000);
+            });
+            thread.Start();
         }
 
         private void AuctionServerTransactionsReceived(object ?sender, EventArgs args)
