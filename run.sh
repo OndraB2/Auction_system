@@ -22,6 +22,8 @@ do
  cmd.exe /c start "Instance $i" wsl $command_to_run Client ./terminalInstantions/$i/  
 done
 
+cmd.exe /c start "Instance 5" wsl $command_to_run Client ./terminalInstantions/5/ miner
+
 # vypis do souboru
 # $command_to_run BootstrapNode > ./logs/instance0.txt &
 # sleep 2
