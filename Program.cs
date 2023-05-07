@@ -84,6 +84,8 @@ namespace AuctionSystem
         var tttt = dmapi.IsTransactionAlreadyInBlock(testTransaction);
         var ttttt = dmapi.FindActiveAuctions();
 
+        var data = DataModule.Instance.database;
+
         // test ping
         var testNode = P2PUnit.Instance.RoutingTable.GetClosestNodes(P2PUnit.Instance.NodeId, 3).Last();
         
@@ -154,6 +156,10 @@ namespace AuctionSystem
 
     public PrefixedWriter()
     {
+        if (!Directory.Exists(Program.homeFolder))
+        {
+            Directory.CreateDirectory(Program.homeFolder);
+        }  
         File.WriteAllText(Program.homeFolder + "log.txt", String.Empty);
         originalOut = Console.Out;
     }

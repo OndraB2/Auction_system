@@ -21,6 +21,7 @@ namespace AuctionServer{
         {
             if(sender != null && sender is AuctionServerTransactions)
             {
+                Console.WriteLine("Transactions request received");
                 AuctionServerTransactions message = sender as AuctionServerTransactions;
                 if(!message.Response)
                 {
@@ -35,18 +36,23 @@ namespace AuctionServer{
         {
             if(sender != null && sender is AuctionServerNewTransaction)
             {
-                // kontrola transakce viz ClientNode metoda NewTransactionReceived
-                if((sender as AuctionServerNewTransaction).Transaction is NewAuctionItemTransaction)
+                var message = (sender as AuctionServerNewTransaction);
+                if(message.Transaction != null)
                 {
-                    ActiveAuctions.AddAuction(sender as NewAuctionItemTransaction);
-                }
-                else if((sender as AuctionServerNewTransaction).Transaction is NewItemBidTransaction)
-                {
-                    ActiveAuctions.NewBid(sender as NewItemBidTransaction);
-                }
-                else if((sender as AuctionServerNewTransaction).Transaction is EndOfAuctionTransaction)
-                {
-                    ActiveAuctions.EndOfAuctionByOwner(sender as EndOfAuctionTransaction);
+                    Console.WriteLine("new transaction received");
+                    // kontrola transakce viz ClientNode metoda NewTransactionReceived
+                    if(message.Transaction is NewAuctionItemTransaction)
+                    {
+                        ActiveAuctions.AddAuction(message.Transaction as NewAuctionItemTransaction);
+                    }
+                    else if(message.Transaction is NewItemBidTransaction)
+                    {
+                        ActiveAuctions.NewBid(message.Transaction as NewItemBidTransaction);
+                    }
+                    else if(message.Transaction is EndOfAuctionTransaction)
+                    {
+                        ActiveAuctions.EndOfAuctionByOwner(message.Transaction as EndOfAuctionTransaction);
+                    }
                 }
             }
         }
@@ -55,6 +61,7 @@ namespace AuctionServer{
         {
             if(sender != null && sender is AuctionServerSubscribe)
             {
+                Console.WriteLine("subscribe request received");
                 ActiveAuctions.AttachObserverToAuction((sender as AuctionServerSubscribe).AuctionId, (sender as AuctionServerSubscribe).SenderNode);
             }
         }

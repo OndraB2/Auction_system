@@ -12,14 +12,18 @@ namespace AuctionServer{
             KNode = knode;
         }
 
-        public override void UpdateNewBid()
+        public override void UpdateNewBid(Transaction transaction)
         {
             System.Console.WriteLine("update new bid");
+            var message = MessageFactory.GetAuctionServerNewTransactionResponse(P2PUnit.Instance.BootstrapNode, KNode, transaction);
+            P2PUnit.Instance.SendMessageToSpecificNode(message);
         }
 
-        public override void UpdateEndOfAcution()
+        public override void UpdateEndOfAcution(Transaction transaction)
         {
             System.Console.WriteLine("update end of auction");
+            var message = MessageFactory.GetAuctionServerNewTransactionResponse(P2PUnit.Instance.BootstrapNode, KNode, transaction);
+            P2PUnit.Instance.SendMessageToSpecificNode(message);
         }
 
         public void Register(string ipAddress, int port)

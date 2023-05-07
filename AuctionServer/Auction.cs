@@ -23,15 +23,15 @@ namespace AuctionServer{
             observers.Add(observer);		
         }
 
-        public void NotifyAllObserversAboutNewBid(){
+        public void NotifyAllObserversAboutNewBid(Transaction transaction){
             foreach (User observer in observers) {
-                observer.UpdateNewBid();
+                observer.UpdateNewBid(transaction);
             }
         } 
 
-        public void NotifyAllObserversAboutEndOfAuction(){
+        public void NotifyAllObserversAboutEndOfAuction(Transaction transaction){
             foreach (User observer in observers) {
-                observer.UpdateEndOfAcution();
+                observer.UpdateEndOfAcution(transaction);
             }
         } 		
 
@@ -53,8 +53,8 @@ namespace AuctionServer{
                 HighestBid = NIBtransaction.Amount;
                 HighestBidderID = NIBtransaction.TransactionOwnerId;
                 TransactionPool.AddTransactionToPool(NIBtransaction);
-                System.Console.WriteLine("\tNew highest bid by: " + new Guid(NIBtransaction.TransactionOwnerId) + ", value: " + NIBtransaction.Amount);
-                NotifyAllObserversAboutNewBid();
+                System.Console.WriteLine("\tNew highest bid by: , value: " + NIBtransaction.Amount);
+                NotifyAllObserversAboutNewBid(NIBtransaction);
             }
             if( NIBtransaction.Amount >= HighestBid && NIBtransaction.Amount > FinalBid )
             {
@@ -76,7 +76,7 @@ namespace AuctionServer{
             TransactionPool.AddTransactionToPool(EOATransaction);    
             System.Console.WriteLine("End, Sold to: " + new Guid(EOATransaction.TransactionOwnerId) + ", sold for: " + EOATransaction.Amount + "\n");
             ActiveAuctions.RemoveAuction(AuctionTransaction);
-            NotifyAllObserversAboutEndOfAuction();
+            NotifyAllObserversAboutEndOfAuction(EOATransaction);
         }
 
         public void NewBid(double amount, Byte[] bidderID)
@@ -88,7 +88,7 @@ namespace AuctionServer{
                 NewItemBidTransaction NIBtransaction = NewItemBidTransaction.GetRandom(AuctionTransaction.AuctionItemId, AuctionTransaction.AuctionOwnerId, amount, bidderID);
                 TransactionPool.AddTransactionToPool(NIBtransaction);
                 System.Console.WriteLine("\tNew highest bid by: " + new Guid(bidderID) + ", value: " + amount);
-                NotifyAllObserversAboutNewBid();
+                NotifyAllObserversAboutNewBid(NIBtransaction);
             }
             if( amount >= HighestBid && amount > FinalBid )
             {
@@ -98,7 +98,7 @@ namespace AuctionServer{
                 TransactionPool.AddTransactionToPool(EOAtransaction);
                 System.Console.WriteLine("End, Sold to: " + new Guid(bidderID) + ", sold for: " + amount + "\n");
                 ActiveAuctions.RemoveAuction(AuctionTransaction);
-                NotifyAllObserversAboutEndOfAuction();
+                NotifyAllObserversAboutEndOfAuction(EOAtransaction);
             }
         }
     }

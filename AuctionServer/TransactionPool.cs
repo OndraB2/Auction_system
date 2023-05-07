@@ -105,9 +105,9 @@ namespace AuctionServer
                 (t as Transaction).Print();
             }
         }
-        static public void AddTransactionToPool(object transaction)
+        static public void AddTransactionToPool(Transaction transaction)
         {
-            ActiveTransactionsList.Add(transaction as Transaction);
+            ActiveTransactionsList.Add(transaction);
         }
         static public List<Transaction> GetTransactions()
         {
