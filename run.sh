@@ -6,6 +6,27 @@ command_to_run="dotnet run ./bin/Debug/net7.0/Auction_System"
 # Define the number of instances to run
 num_instances=4
 
+# Array to store PIDs
+pids=()
+
+$command_to_run BootstrapNode ./terminalInstantions/0/ & pids+=($!)
+sleep 3
+for i in $(seq 1 $num_instances)
+do
+    $command_to_run Client ./terminalInstantions/$i/ & pids+=($!)
+done
+
+$command_to_run Client ./terminalInstantions/5/ miner & pids+=($!)
+
+#sleep 20
+read -p "Press any key to stop"
+
+for pid in "${pids[@]}"
+do
+    echo "kill $pid"
+    kill "$pid"
+done
+
 # linux
 # Loop through the number of instances and open a new terminal window for each
 #gnome-terminal --tab --title="Instance $i" --command="$command_to_run BootstrapNode"
@@ -15,14 +36,14 @@ num_instances=4
 #done
 
 # wsl
-#cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
-sleep 3
-for i in $(seq 1 $num_instances)
-do
- cmd.exe /c start "Instance $i" wsl $command_to_run Client ./terminalInstantions/$i/  
-done
+# cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
+# sleep 3
+# for i in $(seq 1 $num_instances)
+# do
+#  cmd.exe /c start "Instance $i" wsl $command_to_run Client ./terminalInstantions/$i/  
+# done
 
-cmd.exe /c start "Instance 5" wsl $command_to_run Client ./terminalInstantions/5/ miner
+# cmd.exe /c start "Instance 5" wsl $command_to_run Client ./terminalInstantions/5/ miner
 
 #cmd.exe /c start "Instance 6" wsl $command_to_run Client ./terminalInstantions/6/ miner
 
