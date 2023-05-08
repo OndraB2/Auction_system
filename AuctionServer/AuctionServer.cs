@@ -4,6 +4,7 @@ using BlockChainLedger;
 namespace AuctionServer{
     public class AuctionServer
     {
+        private Timer RemoveConfirmedTransactionsTimer;
         public void Start()
         {
             AuctionServerTransactions.OnReceiveRegistrations += this.AuctionServerTransactionsReceived;
@@ -11,11 +12,12 @@ namespace AuctionServer{
             AuctionServerSubscribe.OnReceiveRegistrations += this.AuctionServerSubscribeReceived;
             
             // thread generovani transakci
-            Thread thread = new Thread(() => {
-                TransactionPool.RemoveConfirmedTransactionFromPool();
-                Thread.Sleep(60000);
-            });
-            thread.Start();
+            // Thread thread = new Thread(() => {
+            //     TransactionPool.RemoveConfirmedTransactionFromPool();
+            //     Thread.Sleep(60000);
+            // });
+            // thread.Start();
+            RemoveConfirmedTransactionsTimer = new Timer(new TimerCallback(TransactionPool.RemoveConfirmedTransactionFromPool), null, 60000, 60000);
         }
 
         private void AuctionServerTransactionsReceived(object ?sender, EventArgs args)

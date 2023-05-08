@@ -37,7 +37,8 @@ namespace Kademlia
             //
             if(!database.ContainsKey(block.Rank))
             {
-                if(true || !checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
+                Console.WriteLine("Store Check validity " + checkValidity);
+                if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
                 {
                     lock(_lock)
                     {  
@@ -61,16 +62,16 @@ namespace Kademlia
 
         public Block? Get(byte[] ValueId)
         {
+            StringBuilder builder = new StringBuilder();
+            foreach(var b in ValueId)
+            {
+                builder.Append(b);
+                builder.Append('.');
+            }
+            Console.WriteLine($"finding block " + builder.ToString());
+            
             lock(_lock)
             {
-                StringBuilder builder = new StringBuilder();
-                foreach(var b in ValueId)
-                {
-                    builder.Append(b);
-                    builder.Append('.');
-                }
-                Console.WriteLine($"finding block " + builder.ToString());
-
                 if(database.ContainsKey(ValueId))
                 {
                     return database[ValueId];

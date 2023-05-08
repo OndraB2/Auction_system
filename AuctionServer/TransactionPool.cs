@@ -94,8 +94,30 @@ namespace AuctionServer
             // }
         }
 
-        static public void RemoveConfirmedTransactionFromPool()
+        static public void RemoveConfirmedTransactionFromPool(object ?state)
         {
+            Console.WriteLine("RemoveConfirmedTransactionFromPool start");
+            // List<Transaction> ActiveTransactionsList_Copy = new List<Transaction>(ActiveTransactionsList);
+            // for(int i = 0; i < ActiveTransactionsList_Copy.Count; i++)
+            // {
+            //     if(DataModuleAPIinstance.IsTransactionAlreadyInBlock(ActiveTransactionsList_Copy[i]))
+            //     {
+            //         Console.WriteLine("RemoveConfirmedTransactionFromPool Remove at index " + i);
+            //         ActiveTransactionsList.RemoveAt(i);
+            //     }
+
+            // }
+
+            List<Transaction> toRemove = new List<Transaction>();
+            foreach(var t in ActiveTransactionsList)
+            {
+                toRemove.Add(t);
+            }
+            foreach(var t in toRemove)
+            {
+                Console.WriteLine("RemoveConfirmedTransactionFromPool Remove " + t.TID);
+                ActiveTransactionsList.Remove(t);
+            }
         }
 
         static public void PrintTransactions()
