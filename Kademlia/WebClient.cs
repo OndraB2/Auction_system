@@ -20,6 +20,7 @@ namespace Kademlia
 
         public void Send(string ipAddressString, int port, Message message)
         {
+            Console.WriteLine($"Sending {message.GetType()} to {ipAddressString}:{port}");
             byte[] data = message.Serialize();
             Send(ipAddressString, port, data);
         }
@@ -69,8 +70,9 @@ namespace Kademlia
                     {
                         try
                         {
+                            
+                            P2PUnit.Instance.RoutingTable.AddNode(wrapper.SenderNode);
                             Message message = Serializer.Deserialize(wrapper);
-                            P2PUnit.Instance.RoutingTable.AddNode(message.SenderNode);
                             new Thread(() => message.OnReceive()).Start();
                         }
                         catch(Exception ex)

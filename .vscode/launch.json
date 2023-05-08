@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net7.0/Auction_System.dll",
-            "args": [],
+            "args": [],  // miner - "ee", "Client", "./terminalInstantions/5/", "miner"  // bootstrap node - "bb", "BootstrapNode", "./terminalInstantions/0/"
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",

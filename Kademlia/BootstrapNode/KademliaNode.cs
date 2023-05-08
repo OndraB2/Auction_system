@@ -5,7 +5,11 @@ using AuctionServer;
 
 namespace Kademlia
 {
+<<<<<<< HEAD
     public class KademliaNode : Observer, IComparable 
+=======
+    public class KademliaNode : IComparable 
+>>>>>>> master
     {
         public byte[] NodeId { get; set; }
         public string IpAddress { get; set; }
@@ -109,6 +113,11 @@ namespace Kademlia
         public bool CompareNodeId(KademliaNode node)
         {
             return node.NodeId.SequenceEqual(this.NodeId);
+        }
+
+        public bool ComparePublicKey(KademliaNode node)
+        {
+            return node.PublicKey.SequenceEqual(this.PublicKey);
         }
 
         public byte[] CalculateXorDistance(KademliaNode node)

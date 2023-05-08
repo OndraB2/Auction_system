@@ -1,7 +1,7 @@
 using System.Runtime.Intrinsics.Arm;
 
 namespace BlockChainLedger{
-    class EndOfAuctionTransaction : Transaction
+    public class EndOfAuctionTransaction : Transaction
     {
         public byte[] TransactionOwnerId;
         public double Amount;
@@ -35,9 +35,14 @@ namespace BlockChainLedger{
             System.Console.WriteLine(TransactionOwnerId);
             System.Console.WriteLine(Amount);
         }
+<<<<<<< HEAD
         static public EndOfAuctionTransaction GetRandom(Guid auctionItemId, byte[] auctionOwnerId, double amount, byte[] bidderId)
         {
             Random rand = new Random();
+=======
+        static public EndOfAuctionTransaction CreateNew(Guid auctionItemId, byte[] auctionOwnerId, double amount, byte[] bidderId)
+        {
+>>>>>>> master
             Guid tid = Guid.NewGuid();
             DateTime timestamp = DateTime.Now;
 

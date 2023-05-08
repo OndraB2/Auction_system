@@ -2,6 +2,7 @@ using System;
 using BlockChainLedger;
 using Kademlia;
 using System.Threading;
+using AuctionClient;
 
 namespace AuctionServer
 {
@@ -28,6 +29,7 @@ namespace AuctionServer
         static public List<Transaction> ActiveTransactionsList = new List<Transaction>();
         // static public List<User> UsersList = new List<User>();
         static public List<SentGroupOfTransactions> CurrentlyBeingConfirmedTransactionsGroups = new List<SentGroupOfTransactions>();
+        static public DataModuleAPI DataModuleAPIinstance;
 
         static public bool CompareTwoTransactionsGroups(List<Transaction> group1, List<Transaction> group2)
         {
@@ -70,7 +72,7 @@ namespace AuctionServer
         static public void AddTransactionsGroupToBeingConfirmedList(List<Transaction> transactionsGroup)
         {
             int index = FindTransactionsGroupInBeingConfirmedList(transactionsGroup);
-            System.Console.WriteLine(index);
+            System.Console.WriteLine("Index: " + index);
             if (index >= 0)
             {
                 CurrentlyBeingConfirmedTransactionsGroups[index].IncrementCount();
@@ -83,11 +85,38 @@ namespace AuctionServer
 
         static public void PrintBeingConfirmedTransactionsList()
         {
-            foreach(SentGroupOfTransactions group in CurrentlyBeingConfirmedTransactionsGroups)
+            System.Console.WriteLine("Count of Transaction Groups: " + CurrentlyBeingConfirmedTransactionsGroups.Count);
+            // foreach(SentGroupOfTransactions group in CurrentlyBeingConfirmedTransactionsGroups)
+            // {
+            //     System.Console.WriteLine(group);
+            //     System.Console.WriteLine(group.count);
+            //     System.Console.WriteLine();
+            // }
+        }
+
+        static public void RemoveConfirmedTransactionFromPool(object ?state)
+        {
+            Console.WriteLine("RemoveConfirmedTransactionFromPool start");
+            // List<Transaction> ActiveTransactionsList_Copy = new List<Transaction>(ActiveTransactionsList);
+            // for(int i = 0; i < ActiveTransactionsList_Copy.Count; i++)
+            // {
+            //     if(DataModuleAPIinstance.IsTransactionAlreadyInBlock(ActiveTransactionsList_Copy[i]))
+            //     {
+            //         Console.WriteLine("RemoveConfirmedTransactionFromPool Remove at index " + i);
+            //         ActiveTransactionsList.RemoveAt(i);
+            //     }
+
+            // }
+
+            List<Transaction> toRemove = new List<Transaction>();
+            foreach(var t in ActiveTransactionsList)
             {
-                System.Console.WriteLine(group);
-                System.Console.WriteLine(group.count);
-                System.Console.WriteLine();
+                toRemove.Add(t);
+            }
+            foreach(var t in toRemove)
+            {
+                Console.WriteLine("RemoveConfirmedTransactionFromPool Remove " + t.TID);
+                ActiveTransactionsList.Remove(t);
             }
         }
 
@@ -98,15 +127,15 @@ namespace AuctionServer
                 (t as Transaction).Print();
             }
         }
-        static public void AddTransactionToPool(object transaction)
+        static public void AddTransactionToPool(Transaction transaction)
         {
-            ActiveTransactionsList.Add(transaction as Transaction);
+            ActiveTransactionsList.Add(transaction);
         }
         static public List<Transaction> GetTransactions()
         {
             // user.Transactions = ActiveTransactionsList;
             // UsersList.Add(user);
-            AddTransactionsGroupToBeingConfirmedList(ActiveTransactionsList);
+            AddTransactionsGroupToBeingConfirmedList(new List<Transaction>(ActiveTransactionsList));
             return ActiveTransactionsList;
         }
 
@@ -115,47 +144,55 @@ namespace AuctionServer
             List<Transaction> N_FirstTransactions = ActiveTransactionsList.Take(n).ToList();
             // user.Transactions = N_FirstTransactions;
             // UsersList.Add(user);
-            AddTransactionsGroupToBeingConfirmedList(N_FirstTransactions);
+            // AddTransactionsGroupToBeingConfirmedList(N_FirstTransactions);
 
             return N_FirstTransactions;
         }
 
-        static public void RemoveUser(KademliaNode KNode)
+        static public void RemoveConfirmedTransactionsFromPool()
         {
-
+            
         }
 
         static public void GenerateTraffic()
         {
-            NewAuctionItemTransaction auction1 = NewAuctionItemTransaction.GetRandom();
-            ActiveAuctions.AddAuction(auction1);
-            NewAuctionItemTransaction auction2 = NewAuctionItemTransaction.GetRandom();
-            ActiveAuctions.AddAuction(auction2);
+            KademliaNode kn = KademliaNode.CreateInstance("125.12.41.24", 1232);
+            AuctionSeller seller1 = new AuctionSeller(kn);
+            AuctionSeller seller2 = new AuctionSeller(kn);
+            User u1 = new User(kn);
+            User u2 = new User(kn);
+            // NewAuctionItemTransaction auction1 = NewAuctionItemTransaction.GetRandom();
+            // Auction auction1 = ActiveAuctions.AddAuction(auction1);
+
+            Auction auction1 = seller1.CreateAuction();
+            Auction auction2 = seller2.CreateAuction();
+
+            auction1.AttachNewObserver(u1);
+            // auction1.AttachNewObserver(u2);
             Random rand = new Random();
             while(true)
             {   
-                int a1_Bbid = rand.Next(Convert.ToInt32(auction1.GetStartingBid()), Convert.ToInt32(auction1.GetFinalBid() + auction1.GetStartingBid()));
-                int a2_Bbid = rand.Next(Convert.ToInt32(auction2.GetStartingBid()), Convert.ToInt32(auction2.GetFinalBid() + auction2.GetStartingBid()));
+                int auction1_Bbid = rand.Next(Convert.ToInt32(auction1.StartingBid), Convert.ToInt32(auction1.FinalBid + auction1.StartingBid));
+                int auction2_Bbid = rand.Next(Convert.ToInt32(auction2.StartingBid), Convert.ToInt32(auction2.FinalBid + auction2.StartingBid));
 
-                ActiveAuctions.NewBid(auction1, a1_Bbid, Guid.NewGuid().ToByteArray());
-                if(ActiveAuctions.GetAuction(auction1) is null)
+                ActiveAuctions.NewBid(auction1, auction1_Bbid, Guid.NewGuid().ToByteArray());
+                if(!ActiveAuctions.IsAuctionActive(auction1))
                 {
-                    auction1 = NewAuctionItemTransaction.GetRandom();   
-                    ActiveAuctions.AddAuction(auction1);
+                    auction1 = seller1.CreateAuction();
+
                 }
 
                 Thread.Sleep(3000);
 
-                ActiveAuctions.NewBid(auction2, a2_Bbid, Guid.NewGuid().ToByteArray());
-                if(ActiveAuctions.GetAuction(auction2) is null)
+                ActiveAuctions.NewBid(auction2, auction2_Bbid, Guid.NewGuid().ToByteArray());
+                if(!ActiveAuctions.IsAuctionActive(auction2))
                 {
-                    auction2 = NewAuctionItemTransaction.GetRandom();  
-                    ActiveAuctions.AddAuction(auction2);
+                    auction2 = seller2.CreateAuction();
                 }
 
-                Thread.Sleep(3000);
-                System.Console.WriteLine("Transactin count: " + TransactionPool.GetTransactions().Count);
-
+                Thread.Sleep(1000);
+                TransactionPool.GetTransactions();
+                TransactionPool.PrintBeingConfirmedTransactionsList();
             }
         }
     }
