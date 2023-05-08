@@ -15,7 +15,7 @@ num_instances=4
 #done
 
 # wsl
-cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
+#cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
 sleep 3
 for i in $(seq 1 $num_instances)
 do
@@ -24,7 +24,7 @@ done
 
 cmd.exe /c start "Instance 5" wsl $command_to_run Client ./terminalInstantions/5/ miner
 
-cmd.exe /c start "Instance 6" wsl $command_to_run Client ./terminalInstantions/6/ miner
+#cmd.exe /c start "Instance 6" wsl $command_to_run Client ./terminalInstantions/6/ miner
 
 # vypis do souboru
 # $command_to_run BootstrapNode > ./logs/instance0.txt &

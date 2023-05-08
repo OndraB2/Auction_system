@@ -102,6 +102,7 @@ namespace AuctionSystem
                 if(subscribedAuction == null)
                 {
                     SubscribeToRandomAuction();
+                    Thread.Sleep(30000);
                 }
                 if(subscribedAuction != null)
                 {

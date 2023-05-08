@@ -117,32 +117,36 @@ namespace Kademlia
             return finishedAuctions;
         }
 
+        private static object _lock = new object();  
         public bool IsBlockValid(Block block)
         {
-            // check hash
-            if(!block.IsHashValid())
+            lock(_lock)
             {
-                Console.WriteLine("hash invalid");
-                return false;
-            }
+                // check hash
+                if(!block.IsHashValid())
+                {
+                    Console.WriteLine("hash invalid");
+                    return false;
+                }
 
-            // check block not exist
-            byte[] lastBlockId = FindLastBlockId();
-            if(lastBlockId.SequenceEqual(block.Rank))
-            {
-                Console.WriteLine("Block with same id already exists");
-                return false;
-            }
+                // check block not exist
+                byte[] lastBlockId = FindLastBlockId();
+                if(lastBlockId.SequenceEqual(block.Rank))
+                {
+                    Console.WriteLine("Block with same id already exists");
+                    return false;
+                }
 
-            // check transactions not in existing blocks
-            Console.WriteLine("Checking previous blocks start");
-            if(IsTransactionAlreadyInBlock(block.Transactions))
-            {
-                Console.WriteLine("transaction already in block");
-                return false;
+                // check transactions not in existing blocks
+                Console.WriteLine("Checking previous blocks start");
+                if(IsTransactionAlreadyInBlock(block.Transactions))
+                {
+                    Console.WriteLine("transaction already in block");
+                    return false;
+                }
+                Console.WriteLine("Checking previous blocks end");
+                return true;
             }
-            Console.WriteLine("Checking previous blocks end");
-            return true;
         }
 
         public Block GetLastBlock()
