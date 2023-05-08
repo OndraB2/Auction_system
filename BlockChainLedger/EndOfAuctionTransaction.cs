@@ -35,14 +35,8 @@ namespace BlockChainLedger{
             System.Console.WriteLine(TransactionOwnerId);
             System.Console.WriteLine(Amount);
         }
-<<<<<<< HEAD
-        static public EndOfAuctionTransaction GetRandom(Guid auctionItemId, byte[] auctionOwnerId, double amount, byte[] bidderId)
-        {
-            Random rand = new Random();
-=======
         static public EndOfAuctionTransaction CreateNew(Guid auctionItemId, byte[] auctionOwnerId, double amount, byte[] bidderId)
         {
->>>>>>> master
             Guid tid = Guid.NewGuid();
             DateTime timestamp = DateTime.Now;
 

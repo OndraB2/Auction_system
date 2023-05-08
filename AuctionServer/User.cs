@@ -3,22 +3,14 @@ using BlockChainLedger;
 using Kademlia;
 
 namespace AuctionServer{
-<<<<<<< HEAD
-    public class User
-    {
-        public List<Transaction> Transactions = new List<Transaction>();
-=======
     public class User : Observer
     {
->>>>>>> master
         public KademliaNode KNode;
 
         public User(KademliaNode knode)
         {
             KNode = knode;
         }
-<<<<<<< HEAD
-=======
 
         public override void UpdateNewBid(Transaction transaction)
         {
@@ -43,6 +35,5 @@ namespace AuctionServer{
         {
             KNode = KademliaNode.CreateInstance(ipAddress, port, publicKey);
         }
->>>>>>> master
     }
 }

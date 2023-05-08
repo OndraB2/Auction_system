@@ -62,8 +62,6 @@ namespace BlockChainLedger{
 
             return new NewAuctionItemTransaction(tid, timestamp, auctionItemId, auctionOwnerId, itemName, startingBid, finalBid);
         }
-<<<<<<< HEAD
-=======
 
         static public NewAuctionItemTransaction GetRandom(byte[] auctionOwnerId)
         {
@@ -83,6 +81,5 @@ namespace BlockChainLedger{
 
             return new NewAuctionItemTransaction(tid, timestamp, auctionItemId, auctionOwnerId, itemName, startingBid, finalBid);
         }
->>>>>>> master
     }
 }
