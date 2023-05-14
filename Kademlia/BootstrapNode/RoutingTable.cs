@@ -33,23 +33,42 @@ namespace Kademlia
             PingTimer = new Timer(new TimerCallback(TestActiveNodes), null, 60000, 120000);
         }
 
+        private Dictionary<KademliaNode, int> ToRemove = new Dictionary<KademliaNode, int>();
+
         private void TestActiveNodes(object ?state)
         {
-            List<KademliaNode> ToRemove = new List<KademliaNode>();
+            //List<KademliaNode> ToRemove = new List<KademliaNode>();
             foreach(var bucket in buckets)
             {
                 foreach(var node in bucket)
                 {
                     if(!this.applicationNode.SendPing(node))
                     {
-                        ToRemove.Add(node);
+                        if(ToRemove.ContainsKey(node))
+                        {
+                            ToRemove[node] += 1;
+                        }
+                        else
+                        {
+                            ToRemove[node] = 1;
+                        }
+                    }
+                    else
+                    {
+                        if(ToRemove.ContainsKey(node))
+                        {
+                            ToRemove.Remove(node);
+                        }
                     }
                 }
             }
-            foreach(var node in ToRemove)
+            foreach(var keyValue in ToRemove)
             {
-                RemoveNode(node);
-                Console.WriteLine($"Removing Node no ping response {node.ToString()}");
+                if(keyValue.Value == 3)
+                {
+                    RemoveNode(keyValue.Key);
+                    Console.WriteLine($"Removing Node no ping response {keyValue.ToString()}");
+                }
             }
         }
 

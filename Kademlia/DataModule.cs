@@ -35,27 +35,29 @@ namespace Kademlia
                 return;
             }
             //
-            if(!database.ContainsKey(block.Rank))
+            lock(_lock)
             {
-                Console.WriteLine("Store Check validity " + checkValidity);
-                if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
+                if(!database.ContainsKey(block.Rank))
                 {
-                    lock(_lock)
-                    {  
-                        database.Add(block.Rank, block);
-                    }
-                    StringBuilder builder = new StringBuilder();
-                    foreach(var b in block.Rank)
+                    Console.WriteLine("Store Check validity " + checkValidity);
+                    if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
                     {
-                        builder.Append(b);
-                        builder.Append('.');
+                        
+                            database.Add(block.Rank, block);
+                        
+                        StringBuilder builder = new StringBuilder();
+                        foreach(var b in block.Rank)
+                        {
+                            builder.Append(b);
+                            builder.Append('.');
+                        }
+                        Console.WriteLine($"saving block " + builder.ToString());
+                        Console.WriteLine($"---------------------------------------------------------------------------------");
                     }
-                    Console.WriteLine($"saving block " + builder.ToString());
-                    Console.WriteLine($"---------------------------------------------------------------------------------");
-                }
-                else
-                {
-                    Console.WriteLine("Block is not valid");
+                    else
+                    {
+                        Console.WriteLine("Block is not valid");
+                    }
                 }
             }
         }
