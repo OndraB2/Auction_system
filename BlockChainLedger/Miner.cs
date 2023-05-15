@@ -42,14 +42,14 @@ namespace BlockChainLedger
                 Console.WriteLine("No transactions from application server");
                 return;
             }
-            Console.WriteLine($"transactions from Application server loaded {transactions.Count}");
+            PrefixedWriter.WriteLineImprtant($"transactions from Application server loaded {transactions.Count}");
             Block previousBlock = dataModuleAPI.GetLastBlock();
             if(previousBlock != null)
             {
                 Block b = new PowBlock(previousBlock, previousBlock.Difficulty,transactions, P2PUnit.Instance.NodeId);
                 b.Mine();
                 Node.SendStore(b);
-                Console.WriteLine(b);
+                PrefixedWriter.WriteLineImprtant("Block send to validation" + b.ToString());
                 Console.WriteLine("Block send to validation ###################################################");
             }
 

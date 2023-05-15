@@ -1,4 +1,5 @@
 using System.Text;
+using AuctionSystem;
 using BlockChainLedger;
 
 namespace Kademlia
@@ -43,7 +44,7 @@ namespace Kademlia
                     if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
                     {
                         
-                            database.Add(block.Rank, block);
+                        database.Add(block.Rank, block);
                         
                         StringBuilder builder = new StringBuilder();
                         foreach(var b in block.Rank)
@@ -51,7 +52,8 @@ namespace Kademlia
                             builder.Append(b);
                             builder.Append('.');
                         }
-                        Console.WriteLine($"saving block " + builder.ToString());
+                        //Console.WriteLine($"saving block " + builder.ToString());
+                        PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString());
                         Console.WriteLine($"---------------------------------------------------------------------------------");
                     }
                     else

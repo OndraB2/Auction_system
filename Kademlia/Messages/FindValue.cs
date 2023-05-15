@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using AuctionSystem;
 using BlockChainLedger;
 using Newtonsoft.Json;
 
@@ -35,13 +36,14 @@ namespace Kademlia
                 var block = DataModule.Instance.Get(ValueId);
                 if(block != null)
                 {
-                    Console.WriteLine("FindValue sending block");
+                    PrefixedWriter.WriteLineImprtant("FindValue sending block");
                     P2PUnit.Instance.Send(MessageFactory.GetFindValueResponse(this.DestinationNode, this.SenderNode, block));
                 }
             }
             else  // response
             {
-                Console.WriteLine("FindValue response received");
+                //Console.WriteLine("FindValue response received");
+                PrefixedWriter.WriteLineImprtant("FindValue response received");
                 OnResponseReceiveRegistrations?.Invoke(this, new EventArgs());
             }
         }

@@ -115,7 +115,7 @@ namespace AuctionServer
             }
             foreach(var t in toRemove)
             {
-                Console.WriteLine("RemoveConfirmedTransactionFromPool Remove " + t.TID);
+                AuctionSystem.PrefixedWriter.WriteLineImprtant("RemoveConfirmedTransactionFromPool Remove " + t.TID);
                 ActiveTransactionsList.Remove(t);
             }
         }

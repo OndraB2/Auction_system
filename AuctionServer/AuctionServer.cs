@@ -1,5 +1,6 @@
 using Kademlia;
 using BlockChainLedger;
+using AuctionSystem;
 
 namespace AuctionServer{
     public class AuctionServer
@@ -24,13 +25,14 @@ namespace AuctionServer{
         {
             if(sender != null && sender is AuctionServerTransactions)
             {
-                Console.WriteLine("Transactions request received");
+                PrefixedWriter.WriteLineImprtant("Miner transactions request received");
                 AuctionServerTransactions message = sender as AuctionServerTransactions;
                 if(!message.Response)
                 {
                     List<Transaction> transactions = TransactionPool.GetTransactions();
                     var responseMessage = MessageFactory.GetAuctionServerTransactionsResponse(message, transactions);
                     P2PUnit.Instance.SendMessageToSpecificNode(responseMessage);
+                    PrefixedWriter.WriteLineImprtant($"Sending {transactions.Count} transactions from transactionpool");
                 }
             }
         }
@@ -42,7 +44,7 @@ namespace AuctionServer{
                 var message = (sender as AuctionServerNewTransaction);
                 if(message.Transaction != null)
                 {
-                    Console.WriteLine("new transaction received");
+                    PrefixedWriter.WriteLineImprtant("new transaction received");
                     // kontrola transakce viz ClientNode metoda NewTransactionReceived
                     if(message.Transaction is NewAuctionItemTransaction)
                     {
@@ -64,7 +66,7 @@ namespace AuctionServer{
         {
             if(sender != null && sender is AuctionServerSubscribe)
             {
-                Console.WriteLine("subscribe request received");
+                PrefixedWriter.WriteLineImprtant("subscribe request received " + (sender as AuctionServerSubscribe).AuctionId);
                 ActiveAuctions.AttachObserverToAuction((sender as AuctionServerSubscribe).AuctionId, (sender as AuctionServerSubscribe).SenderNode);
             }
         }
