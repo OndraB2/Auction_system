@@ -63,6 +63,10 @@ namespace Kademlia
                         else
                         {
                             Console.WriteLine("Block is not valid");
+                            if(block is PoSBlock)
+                            {
+                                AuctionServer.TransactionPool.AddToBlackList(block.MinerId);
+                            }
                         }
                     }
                 }
