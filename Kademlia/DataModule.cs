@@ -36,29 +36,34 @@ namespace Kademlia
                 return;
             }
             //
-            lock(_lock)
-            {
-                if(!database.ContainsKey(block.Rank))
+            if(!database.ContainsKey(block.Rank))
+            { 
+                Console.WriteLine("Store Check validity " + checkValidity);
+                if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block) && dataModuleAPI.AreTransactionsReal(block.Transactions)))
                 {
-                    Console.WriteLine("Store Check validity " + checkValidity);
-                    if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
+                lock(_lock)
+                {
+                    if(!database.ContainsKey(block.Rank))
                     {
                         
-                        database.Add(block.Rank, block);
-                        
-                        StringBuilder builder = new StringBuilder();
-                        foreach(var b in block.Rank)
-                        {
-                            builder.Append(b);
-                            builder.Append('.');
+                        //if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block) /*&& dataModuleAPI.AreTransactionsReal(block.Transactions)*/))  // true || 
+                        //{
+                            database.Add(block.Rank, block);
+                            
+                            StringBuilder builder = new StringBuilder();
+                            foreach(var b in block.Rank)
+                            {
+                                builder.Append(b);
+                                builder.Append('.');
+                            }
+                            //Console.WriteLine($"saving block " + builder.ToString());
+                            PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString());
+                            Console.WriteLine($"---------------------------------------------------------------------------------");
                         }
-                        //Console.WriteLine($"saving block " + builder.ToString());
-                        PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString());
-                        Console.WriteLine($"---------------------------------------------------------------------------------");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Block is not valid");
+                        else
+                        {
+                            Console.WriteLine("Block is not valid");
+                        }
                     }
                 }
             }
@@ -87,8 +92,8 @@ namespace Kademlia
 
         public byte[] GetLastBlockId()
         {
-            lock(_lock)
-            {
+            //lock(_lock)
+            //{
                 if(database.Count > 0)
                 {
                     var blockIds = database.Keys.ToList();
@@ -97,7 +102,7 @@ namespace Kademlia
                     return blockIds.Last().Clone() as byte[];
                 }
                 return new byte[20] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-            }
+            //}
         }
     }
 

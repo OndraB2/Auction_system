@@ -23,20 +23,20 @@ namespace AuctionSystem
         }
         public override void WriteLine(string message)
         {
-            string str = String.Format("{0} {1}", DateTime.Now.ToString("hh:mm:ss.ffffff"), message);
+            string str = String.Format("{0} {1}", DateTime.Now.ToString("HH:mm:ss.ffffff"), message);
             File.AppendAllText(Program.homeFolder + "log.txt", str + "\n");
             originalOut.WriteLine(str);
         }
         public override void Write(string message)
         {
-            string str = String.Format("{0} {1}", DateTime.Now.ToString("hh:mm:ss.ffffff"), message);
+            string str = String.Format("{0} {1}", DateTime.Now.ToString("HH:mm:ss.ffffff"), message);
             File.AppendAllText(Program.homeFolder + "log.txt", str + "\n");
             originalOut.Write(str);
         }
 
         public static void WriteLineImprtant(string message)
         {
-            string str = String.Format("{0} {1}", DateTime.Now.ToString("hh:mm:ss.ffffff"), message);
+            string str = String.Format("{0} {1}", DateTime.Now.ToString("HH:mm:ss.ffffff"), message);
             File.AppendAllText(Program.homeFolder + "importantLog.txt", str + "\n");
             Console.WriteLine(message);
         }

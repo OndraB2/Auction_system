@@ -18,15 +18,16 @@ namespace Kademlia
             do
             {
                 localLastId = Block.Increment(localLastId);
-            }while(node.SendFindValue(localLastId, 6));
+            }while(node.SendFindValue(localLastId, 4));
             Console.WriteLine("found last block Id");
             return DataModule.Instance.GetLastBlockId();
         }
 
-        public bool IsTransactionAlreadyInBlock(Transaction transaction, int n = 10)
+        public bool IsTransactionAlreadyInBlock(Transaction transaction, int n = 10, List<byte[]>? lastNBlocksIds = null)
         {
             // test last n blocks
-            List<byte[]> lastNBlocksIds = this.GetLastNBlockIds(n);
+            if(lastNBlocksIds == null)
+                lastNBlocksIds = this.GetLastNBlockIds(n);
             foreach(var blockId in lastNBlocksIds)
             {
                 Block? block = DataModule.Instance.Get(blockId);
@@ -120,8 +121,8 @@ namespace Kademlia
         private static object _lock = new object();  
         public bool IsBlockValid(Block block)
         {
-            lock(_lock)
-            {
+            //lock(_lock)
+            //{
                 // check hash
                 if(!block.IsHashValid())
                 {
@@ -146,7 +147,7 @@ namespace Kademlia
                 }
                 Console.WriteLine("Checking previous blocks end");
                 return true;
-            }
+            //}
         }
 
         public Block GetLastBlock()
@@ -154,8 +155,10 @@ namespace Kademlia
             byte[] lastBlockId = FindLastBlockId();
             if(!IsFirstBlock(lastBlockId))
                 return DataModule.Instance.Get(lastBlockId);
-            else return new Block(0, "", 3, new List<Transaction>(), P2PUnit.Instance.NodeId);
+            else return new Block(0, "", 5, new List<Transaction>(), P2PUnit.Instance.NodeId);
         }
+
+        public bool AreTransactionsReal(List<Transaction> transactions) => this.node.AreTansactionsReal(transactions);
 
         private bool IsFirstBlock(byte[] lastBlockId)
         {
@@ -167,7 +170,7 @@ namespace Kademlia
             return true;
         }
 
-        private List<byte[]> GetLastNBlockIds(int n)
+        public List<byte[]> GetLastNBlockIds(int n)
         {
             List<byte[]> lastIds = new List<byte[]>();
             byte[] lastBlockId = FindLastBlockId();

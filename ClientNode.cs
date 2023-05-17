@@ -15,6 +15,7 @@ namespace AuctionSystem
             FindNode.OnReceiveRegistrations += FindNodeReceived;
 
             AuctionServerNewTransaction.OnReceiveRegistrations += NewTransactionReceived;
+            AuctionServerAreTransactionsReal.OnReceiveRegistrations += AreTransactionsRealReceived;
 
             P2PUnit.Instance.ConnectToBootstrapNode(this.localNode);
 
@@ -114,6 +115,7 @@ namespace AuctionSystem
                         BidToAuction(subscribedAuction.Value, new Random().Next(10, 40));
                     BuyingResetEvent.WaitOne(60000);
                 }
+                Thread.Sleep(10000);
             }
         }
 

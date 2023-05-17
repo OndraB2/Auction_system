@@ -12,6 +12,7 @@ namespace AuctionSystem
     //static ManualResetEvent _quitEvent = new ManualResetEvent(false);
     static void Main(string[] args)
     {
+      try{
       // Console.CancelKeyPress += (sender, eArgs) => {
       //   _quitEvent.Set();
       //   eArgs.Cancel = true;
@@ -92,6 +93,11 @@ namespace AuctionSystem
         Console.WriteLine(node.SendPing(testNode)? "ping ok" : "ping false");
       }
       Console.ReadLine();
+      }
+      catch(Exception e)
+      {
+          Console.WriteLine(e.Message);
+      }
     }
 
     static async void Mining(Miner miner)

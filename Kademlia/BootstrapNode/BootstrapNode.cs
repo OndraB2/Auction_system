@@ -18,6 +18,7 @@ namespace Kademlia
             base.Start();
 
             SendIpToWebserver();
+            P2PUnit.Instance.BootstrapNode = P2PUnit.Instance.NodeId;
             // registrace k zprave connect
             Connect.OnReceiveRegistrations += NewClientConnected;
             TransactionPool.DataModuleAPIinstance = new DataModuleAPI(this);

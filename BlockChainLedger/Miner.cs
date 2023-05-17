@@ -49,7 +49,7 @@ namespace BlockChainLedger
                 Block b = new PowBlock(previousBlock, previousBlock.Difficulty,transactions, P2PUnit.Instance.NodeId);
                 b.Mine();
                 Node.SendStore(b);
-                PrefixedWriter.WriteLineImprtant("Block send to validation" + b.ToString());
+                PrefixedWriter.WriteLineImprtant("Block send to validation " + b.ToString());
                 Console.WriteLine("Block send to validation ###################################################");
             }
 

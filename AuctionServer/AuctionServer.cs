@@ -11,6 +11,7 @@ namespace AuctionServer{
             AuctionServerTransactions.OnReceiveRegistrations += this.AuctionServerTransactionsReceived;
             AuctionServerNewTransaction.OnReceiveRegistrations += this.AuctionServerNewTransactionReceived;
             AuctionServerSubscribe.OnReceiveRegistrations += this.AuctionServerSubscribeReceived;
+            AuctionServerAreTransactionsReal.OnReceiveRegistrations += this.AuctionServerAreTransactionsRealReceived;
             
             // thread generovani transakci
             // Thread thread = new Thread(() => {
@@ -18,7 +19,7 @@ namespace AuctionServer{
             //     Thread.Sleep(60000);
             // });
             // thread.Start();
-            RemoveConfirmedTransactionsTimer = new Timer(new TimerCallback(TransactionPool.RemoveConfirmedTransactionFromPool), null, 60000, 60000);
+            RemoveConfirmedTransactionsTimer = new Timer(new TimerCallback(TransactionPool.RemoveConfirmedTransactionFromPool), null, 30000, 30000);
         }
 
         private void AuctionServerTransactionsReceived(object ?sender, EventArgs args)
@@ -68,6 +69,19 @@ namespace AuctionServer{
             {
                 PrefixedWriter.WriteLineImprtant("subscribe request received " + (sender as AuctionServerSubscribe).AuctionId);
                 ActiveAuctions.AttachObserverToAuction((sender as AuctionServerSubscribe).AuctionId, (sender as AuctionServerSubscribe).SenderNode);
+            }
+        }
+
+        private void AuctionServerAreTransactionsRealReceived(object ?sender, EventArgs args)
+        {
+            if(sender != null && sender is AuctionServerAreTransactionsReal)
+            {
+                AuctionServerAreTransactionsReal message = sender as AuctionServerAreTransactionsReal;
+                bool AreTransactionsReal = TransactionPool.AreTransactionsReal(message.Transactions);
+                if(!AreTransactionsReal)
+                    TransactionPool.AddToBlackList(message.SenderNode);
+                var response = MessageFactory.GetAuctionServerAreTransactionsRealResponse(message.DestinationNode, message.SenderNode, message.Transactions, AreTransactionsReal);
+                P2PUnit.Instance.SendMessageToSpecificNode(response);
             }
         }
 
