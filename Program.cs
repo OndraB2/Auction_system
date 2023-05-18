@@ -105,7 +105,7 @@ namespace AuctionSystem
       while(true)
       {
         miner.MineNewBlock();
-        await Task.Delay(new Random().Next(15000, 25000));
+        await Task.Delay(new Random().Next(25000, 35000));
       }
     }
 
