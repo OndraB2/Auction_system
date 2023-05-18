@@ -81,5 +81,18 @@ namespace Kademlia
         {
             return new AuctionServerSubscribe(senderNode, destinationNode, auctionId);
         }
+
+        public static AuctionServerAreTransactionsReal GetAuctionServerAreTransactionsReal(KademliaNode senderNode, KademliaNode destinationNode, List<Transaction> transactions)
+        {
+            return new AuctionServerAreTransactionsReal(senderNode, destinationNode, transactions);
+        }
+
+        public static AuctionServerAreTransactionsReal GetAuctionServerAreTransactionsRealResponse(KademliaNode senderNode, KademliaNode destinationNode, List<Transaction> transactions, bool response)
+        {
+            var message = new AuctionServerAreTransactionsReal(senderNode, destinationNode, transactions);
+            message.Real = response;
+            message.Response = true;
+            return message;
+        }
     }
 }

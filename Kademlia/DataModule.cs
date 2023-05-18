@@ -1,4 +1,5 @@
 using System.Text;
+using AuctionSystem;
 using BlockChainLedger;
 
 namespace Kademlia
@@ -36,26 +37,38 @@ namespace Kademlia
             }
             //
             if(!database.ContainsKey(block.Rank))
-            {
+            { 
                 Console.WriteLine("Store Check validity " + checkValidity);
-                if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block)))  // true || 
+                if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block) && dataModuleAPI.AreTransactionsReal(block.Transactions)))
                 {
-                    lock(_lock)
-                    {  
-                        database.Add(block.Rank, block);
-                    }
-                    StringBuilder builder = new StringBuilder();
-                    foreach(var b in block.Rank)
+                lock(_lock)
+                {
+                    if(!database.ContainsKey(block.Rank))
                     {
-                        builder.Append(b);
-                        builder.Append('.');
+                        
+                        //if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block) /*&& dataModuleAPI.AreTransactionsReal(block.Transactions)*/))  // true || 
+                        //{
+                            database.Add(block.Rank, block);
+                            
+                            StringBuilder builder = new StringBuilder();
+                            foreach(var b in block.Rank)
+                            {
+                                builder.Append(b);
+                                builder.Append('.');
+                            }
+                            //Console.WriteLine($"saving block " + builder.ToString());
+                            PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString());
+                            Console.WriteLine($"---------------------------------------------------------------------------------");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Block is not valid");
+                            if(block is PoSBlock)
+                            {
+                                AuctionServer.TransactionPool.AddToBlackList(block.MinerId);
+                            }
+                        }
                     }
-                    Console.WriteLine($"saving block " + builder.ToString());
-                    Console.WriteLine($"---------------------------------------------------------------------------------");
-                }
-                else
-                {
-                    Console.WriteLine("Block is not valid");
                 }
             }
         }
@@ -83,8 +96,8 @@ namespace Kademlia
 
         public byte[] GetLastBlockId()
         {
-            lock(_lock)
-            {
+            //lock(_lock)
+            //{
                 if(database.Count > 0)
                 {
                     var blockIds = database.Keys.ToList();
@@ -93,7 +106,7 @@ namespace Kademlia
                     return blockIds.Last().Clone() as byte[];
                 }
                 return new byte[20] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-            }
+            //}
         }
     }
 

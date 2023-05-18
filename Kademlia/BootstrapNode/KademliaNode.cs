@@ -2,6 +2,7 @@ using System.Text;
 using AuctionSystem;
 using Newtonsoft.Json;
 using AuctionServer;
+using System.Numerics;
 
 namespace Kademlia
 {
@@ -142,6 +143,20 @@ namespace Kademlia
             builder.Append(":");
             builder.Append(Port);
             return builder.ToString();
+        }
+
+        public override int GetHashCode()             
+        {  
+            return new BigInteger(NodeId).GetHashCode();
+        }
+        public override bool Equals(object obj) 
+        { 
+                return Equals(obj as KademliaNode); 
+        }
+
+        public bool Equals(KademliaNode obj)
+        { 
+            return CompareTo(obj)==0;
         }
     }
 

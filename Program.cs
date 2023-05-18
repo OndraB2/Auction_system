@@ -12,6 +12,7 @@ namespace AuctionSystem
     //static ManualResetEvent _quitEvent = new ManualResetEvent(false);
     static void Main(string[] args)
     {
+      try{
       // Console.CancelKeyPress += (sender, eArgs) => {
       //   _quitEvent.Set();
       //   eArgs.Cancel = true;
@@ -92,6 +93,11 @@ namespace AuctionSystem
         Console.WriteLine(node.SendPing(testNode)? "ping ok" : "ping false");
       }
       Console.ReadLine();
+      }
+      catch(Exception e)
+      {
+          Console.WriteLine(e.Message);
+      }
     }
 
     static async void Mining(Miner miner)
@@ -99,7 +105,7 @@ namespace AuctionSystem
       while(true)
       {
         miner.MineNewBlock();
-        await Task.Delay(new Random().Next(15000, 25000));
+        await Task.Delay(new Random().Next(25000, 35000));
       }
     }
 
@@ -150,35 +156,5 @@ namespace AuctionSystem
     }
   }
 
-  class PrefixedWriter : TextWriter
-  { 
-    private TextWriter originalOut;
-
-    public PrefixedWriter()
-    {
-        if (!Directory.Exists(Program.homeFolder))
-        {
-            Directory.CreateDirectory(Program.homeFolder);
-        }  
-        File.WriteAllText(Program.homeFolder + "log.txt", String.Empty);
-        originalOut = Console.Out;
-    }
-
-    public override Encoding Encoding
-    {
-        get { return new System.Text.ASCIIEncoding(); }
-    }
-    public override void WriteLine(string message)
-    {
-      string str = String.Format("{0} {1}", DateTime.Now.ToString("hh:mm:ss.ffffff"), message);
-      File.AppendAllText(Program.homeFolder + "log.txt", str + "\n");
-      originalOut.WriteLine(str);
-    }
-    public override void Write(string message)
-    {
-      string str = String.Format("{0} {1}", DateTime.Now.ToString("hh:mm:ss.ffffff"), message);
-      File.AppendAllText(Program.homeFolder + "log.txt", str + "\n");
-      originalOut.Write(str);
-    }
-  }
+  
 }

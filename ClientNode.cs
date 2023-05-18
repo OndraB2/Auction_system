@@ -15,6 +15,7 @@ namespace AuctionSystem
             FindNode.OnReceiveRegistrations += FindNodeReceived;
 
             AuctionServerNewTransaction.OnReceiveRegistrations += NewTransactionReceived;
+            AuctionServerAreTransactionsReal.OnReceiveRegistrations += AreTransactionsRealReceived;
 
             P2PUnit.Instance.ConnectToBootstrapNode(this.localNode);
 
@@ -70,6 +71,7 @@ namespace AuctionSystem
                 P2PUnit.Instance.SendMessageToBootstrapNode(message);
                 subscribedAuction = auctions[i].AuctionItemId;
                 lastSubscribedAuction = auctions[i];
+                PrefixedWriter.WriteLineImprtant("Subscribe to auction " + subscribedAuction);
             }
         }
 
@@ -78,6 +80,7 @@ namespace AuctionSystem
             Transaction t = new NewItemBidTransaction(Guid.NewGuid(), DateTime.Now, auctionId, this.lastSubscribedAuction.AuctionOwnerId, P2PUnit.Instance.NodeId.NodeId, price);
             var message = MessageFactory.GetAuctionServerNewTransaction(P2PUnit.Instance.NodeId, P2PUnit.Instance.BootstrapNode, t);
             P2PUnit.Instance.SendMessageToBootstrapNode(message);
+            PrefixedWriter.WriteLineImprtant("Bid to auction " + auctionId);
         }
 
         protected ManualResetEvent SellingResetEvent = new ManualResetEvent(false);
@@ -112,6 +115,7 @@ namespace AuctionSystem
                         BidToAuction(subscribedAuction.Value, new Random().Next(10, 40));
                     BuyingResetEvent.WaitOne(60000);
                 }
+                Thread.Sleep(10000);
             }
         }
 
@@ -124,17 +128,17 @@ namespace AuctionSystem
                 var message = sender as AuctionServerNewTransaction;
                 if(message.Response)
                 {
-                    Console.WriteLine("new transaction response received");
+                    PrefixedWriter.WriteLineImprtant("new transaction response received");
                     var transaction = message.Transaction;
                     subscribedTransactions.Add(transaction);
                     if(transaction is NewItemBidTransaction)
                     {
-                        Console.WriteLine("new bid transaction");
+                        PrefixedWriter.WriteLineImprtant("new bid transaction");
                         lastPrice = (transaction as NewItemBidTransaction).Amount;
                     }
                     if(transaction is EndOfAuctionTransaction)
                     {
-                        Console.WriteLine("new end of auction transaction");
+                        PrefixedWriter.WriteLineImprtant("new end of auction transaction");
                         if(subscribedAuction!=null)
                         if(subscribedAuction == (transaction as EndOfAuctionTransaction).AuctionItemId)
                         { 

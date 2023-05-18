@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using AuctionSystem;
 using BlockChainLedger;
 using Newtonsoft.Json;
 
@@ -20,7 +21,7 @@ namespace Kademlia
 
         public override void OnReceive()
         {
-            Console.WriteLine("Store received");
+            PrefixedWriter.WriteLineImprtant("Store received");
             DataModule.Instance.Store(Block);
         }
 

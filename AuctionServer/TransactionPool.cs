@@ -94,6 +94,7 @@ namespace AuctionServer
             // }
         }
 
+        static object _lock = new object();
         static public void RemoveConfirmedTransactionFromPool(object ?state)
         {
             Console.WriteLine("RemoveConfirmedTransactionFromPool start");
@@ -107,17 +108,36 @@ namespace AuctionServer
             //     }
 
             // }
-
-            List<Transaction> toRemove = new List<Transaction>();
-            foreach(var t in ActiveTransactionsList)
+            lock(_lock)
             {
-                toRemove.Add(t);
+            List<Transaction> toRemove = new List<Transaction>();
+            List<byte[]> lastNBlocksIds = DataModuleAPIinstance.GetLastNBlockIds(10);
+            var ActiveTransactionsListCopy = new List<Transaction>(ActiveTransactionsList);
+            foreach(var t in ActiveTransactionsListCopy)
+            {
+                if(DataModuleAPIinstance.IsTransactionAlreadyInBlock(t, 10, lastNBlocksIds))
+                    toRemove.Add(t);
             }
             foreach(var t in toRemove)
             {
-                Console.WriteLine("RemoveConfirmedTransactionFromPool Remove " + t.TID);
-                ActiveTransactionsList.Remove(t);
+                AuctionSystem.PrefixedWriter.WriteLineImprtant("RemoveConfirmedTransactionFromPool Remove " + t.TID);
+                if(ActiveTransactionsList.Contains(t))
+                    ActiveTransactionsList.Remove(t);
             }
+            }
+        }
+
+        static public bool AreTransactionsReal(List<Transaction> transactions)
+        {
+            foreach(var transaction in transactions)
+            {
+                var transactionFromPool = ActiveTransactionsList.Find(t=>t.TID == transaction.TID);
+                if(transactionFromPool == null)
+                    return false;
+                if(!transactionFromPool.GetHash().SequenceEqual(transaction.GetHash()))
+                    return false;
+            }
+            return true;
         }
 
         static public void PrintTransactions()
@@ -137,6 +157,12 @@ namespace AuctionServer
             // UsersList.Add(user);
             AddTransactionsGroupToBeingConfirmedList(new List<Transaction>(ActiveTransactionsList));
             return ActiveTransactionsList;
+        }
+
+        private static List<KademliaNode> blackList = new List<KademliaNode>();
+        static public void AddToBlackList(KademliaNode node)
+        {
+            blackList.Add(node);
         }
 
         static public List<Transaction> GetTransactions(int n)

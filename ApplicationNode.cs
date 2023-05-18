@@ -82,7 +82,7 @@ namespace AuctionSystem
             //     i--;
             // }
 
-            pingResetEvent.WaitOne(2000);
+            pingResetEvent.WaitOne(1000);
             Ping? response = receivedPingResponses.Find(x => x.SenderNode.CompareNodeId(node));
             if(response != null)
             {
@@ -136,7 +136,7 @@ namespace AuctionSystem
             
             if(waiting)
             {
-                findNodeResetEvent.WaitOne(2000);
+                findNodeResetEvent.WaitOne(1000);
                 waitForNewNodes = 0;
             }
         }
@@ -166,7 +166,7 @@ namespace AuctionSystem
             // send find node and try again n times
             for(int i = 0 ; i < n; i++)
             {
-                this.findValueResetEvent.WaitOne(2000);
+                this.findValueResetEvent.WaitOne(1000);
                 if(this.findValueReceived == null)
                 {
                     Console.WriteLine("FindValue not received finding new nodes and sending again");
@@ -195,5 +195,35 @@ namespace AuctionSystem
             return false;
         }
         
+        private ManualResetEvent areTransactionsRealResetEvent = new ManualResetEvent(false);
+        private bool transactionsValid = false;
+        protected void AreTransactionsRealReceived(object ?sender, EventArgs args) 
+        {
+            if(sender != null && sender is AuctionServerAreTransactionsReal)
+            {
+                AuctionServerAreTransactionsReal message = sender as AuctionServerAreTransactionsReal;
+                if(message.Response)
+                {
+                    Console.WriteLine("AreTransactionsReal response Received " + message.Real);
+                    transactionsValid = message.Real;
+                    this.areTransactionsRealResetEvent.Set();
+                }
+            }
+        }
+
+        object _lock = new object();
+        public bool AreTansactionsReal(List<Transaction> transactions)
+        {
+            lock(_lock)
+            {
+            transactionsValid = false;
+            var message = MessageFactory.GetAuctionServerAreTransactionsReal(P2PUnit.Instance.NodeId, P2PUnit.Instance.BootstrapNode, transactions);
+            P2PUnit.Instance.SendMessageToBootstrapNode(message);
+            //this.areTransactionsRealResetEvent.WaitOne(2000);
+            Thread.Sleep(1000);
+            Console.WriteLine("AreTransactionsReal " + transactionsValid);
+            }
+            return transactionsValid;
+        }
     }
 }

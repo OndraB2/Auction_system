@@ -74,7 +74,7 @@ namespace AuctionServer{
         public void EndAuction(EndOfAuctionTransaction EOATransaction)
         {
             TransactionPool.AddTransactionToPool(EOATransaction);    
-            System.Console.WriteLine("End, Sold to: " + new Guid(EOATransaction.TransactionOwnerId) + ", sold for: " + EOATransaction.Amount + "\n");
+            System.Console.WriteLine("End, Sold to: " + EOATransaction.TransactionOwnerId[0] + ", sold for: " + EOATransaction.Amount + "\n");
             ActiveAuctions.RemoveAuction(AuctionTransaction);
             NotifyAllObserversAboutEndOfAuction(EOATransaction);
         }
