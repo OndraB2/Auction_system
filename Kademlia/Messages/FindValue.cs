@@ -42,8 +42,8 @@ namespace Kademlia
             }
             else  // response
             {
-                //Console.WriteLine("FindValue response received");
-                PrefixedWriter.WriteLineImprtant("FindValue response received");
+                Console.WriteLine("FindValue response received");
+                //PrefixedWriter.WriteLineImprtant("FindValue response received");
                 OnResponseReceiveRegistrations?.Invoke(this, new EventArgs());
             }
         }

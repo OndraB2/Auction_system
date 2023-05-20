@@ -14,3 +14,5 @@ To run project shell script run.sh can be used. Script run n instantions of appl
 Script kill all instantions after pressing a key.
 
 To see output of each instantion, there are log files in folder terminalInstantions.
+
+Command line arguments [instantion type - BootstrapNode/Client] [folder path for outputs] [Miner](optional)

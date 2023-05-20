@@ -108,6 +108,7 @@ namespace AuctionServer
             //     }
 
             // }
+            try{
             lock(_lock)
             {
             List<Transaction> toRemove = new List<Transaction>();
@@ -124,6 +125,13 @@ namespace AuctionServer
                 if(ActiveTransactionsList.Contains(t))
                     ActiveTransactionsList.Remove(t);
             }
+            }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("RemoveConfirmedTransactionFromPool error");
+                Console.WriteLine(e.Message);
+                _lock = new object();
             }
         }
 
