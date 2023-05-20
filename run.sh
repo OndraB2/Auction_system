@@ -48,6 +48,7 @@ done
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
 sleep 3
 for i in $(seq 1 $num_instances)
@@ -74,6 +75,10 @@ cmd.exe /c start "Instance 5" wsl $command_to_run Client ./terminalInstantions/5
 # vypis do souboru
 # $command_to_run BootstrapNode > ./logs/instance0.txt &
 # sleep 2
+=======
+# cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
+# sleep 3
+>>>>>>> Adam
 =======
 # cmd.exe /c start "Instance 0" wsl $command_to_run BootstrapNode ./terminalInstantions/0/
 # sleep 3

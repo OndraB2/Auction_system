@@ -15,4 +15,4 @@ Script kill all instantions after pressing a key.
 
 To see output of each instantion, there are log files in folder terminalInstantions.
 
-Command line arguments [instantion type - BootstrapNode/Client] [folder path for outputs] [Miner](optional)
+Command line arguments [instantion type - BootstrapNode/Client] [folder path for outputs] [Miner (optional)]
