@@ -45,29 +45,30 @@ namespace Kademlia
                 {
                     if(!database.ContainsKey(block.Rank))
                     {
+                        database.Add(block.Rank, block);
                         
-                        //if(!checkValidity || (checkValidity && dataModuleAPI.IsBlockValid(block) /*&& dataModuleAPI.AreTransactionsReal(block.Transactions)*/))  // true || 
-                        //{
-                            database.Add(block.Rank, block);
-                            
-                            StringBuilder builder = new StringBuilder();
-                            foreach(var b in block.Rank)
-                            {
-                                builder.Append(b);
-                                builder.Append('.');
-                            }
-                            //Console.WriteLine($"saving block " + builder.ToString());
-                            PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString());
-                            Console.WriteLine($"---------------------------------------------------------------------------------");
-                        }
-                        else
+                        StringBuilder builder = new StringBuilder();
+                        foreach(var b in block.Rank)
                         {
-                            Console.WriteLine("Block is not valid");
-                            if(block is PoSBlock)
-                            {
-                                AuctionServer.TransactionPool.AddToBlackList(block.MinerId);
-                            }
+                            builder.Append(b);
+                            builder.Append('.');
                         }
+                        //Console.WriteLine($"saving block " + builder.ToString());
+                        string transactionsText = "";
+                        foreach(Transaction t in block.Transactions)
+                            transactionsText += t.TID + "\n";
+                        transactionsText = transactionsText.TrimEnd('\n');
+                        PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString() + "\nTransactions:\n" + transactionsText);
+                        Console.WriteLine($"---------------------------------------------------------------------------------");
+                    }
+                    else
+                    {
+                        PrefixedWriter.WriteLineImprtant("Block is not valid");
+                        if(block is PoSBlock)
+                        {
+                            AuctionServer.TransactionPool.AddToBlackList(block.MinerId);
+                        }
+                    }
                     }
                 }
             }

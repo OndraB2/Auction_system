@@ -71,7 +71,7 @@ namespace AuctionSystem
                 P2PUnit.Instance.SendMessageToBootstrapNode(message);
                 subscribedAuction = auctions[i].AuctionItemId;
                 lastSubscribedAuction = auctions[i];
-                PrefixedWriter.WriteLineImprtant("Subscribe to auction " + subscribedAuction);
+                PrefixedWriter.WriteLineImprtant("Sending subscribe to auction " + subscribedAuction);
             }
         }
 
@@ -80,7 +80,7 @@ namespace AuctionSystem
             Transaction t = new NewItemBidTransaction(Guid.NewGuid(), DateTime.Now, auctionId, this.lastSubscribedAuction.AuctionOwnerId, P2PUnit.Instance.NodeId.NodeId, price);
             var message = MessageFactory.GetAuctionServerNewTransaction(P2PUnit.Instance.NodeId, P2PUnit.Instance.BootstrapNode, t);
             P2PUnit.Instance.SendMessageToBootstrapNode(message);
-            PrefixedWriter.WriteLineImprtant("Bid to auction " + auctionId);
+            PrefixedWriter.WriteLineImprtant("Sending bid to auction " + auctionId);
         }
 
         protected ManualResetEvent SellingResetEvent = new ManualResetEvent(false);
@@ -128,17 +128,17 @@ namespace AuctionSystem
                 var message = sender as AuctionServerNewTransaction;
                 if(message.Response)
                 {
-                    PrefixedWriter.WriteLineImprtant("new transaction response received");
+                    Console.WriteLine("Notify new transaction response received");
                     var transaction = message.Transaction;
                     subscribedTransactions.Add(transaction);
                     if(transaction is NewItemBidTransaction)
                     {
-                        PrefixedWriter.WriteLineImprtant("new bid transaction");
+                        PrefixedWriter.WriteLineImprtant($"Auction ({transaction.AuctionItemId}) Notify new bid transaction");
                         lastPrice = (transaction as NewItemBidTransaction).Amount;
                     }
                     if(transaction is EndOfAuctionTransaction)
                     {
-                        PrefixedWriter.WriteLineImprtant("new end of auction transaction");
+                        PrefixedWriter.WriteLineImprtant("Notify new end of auction transaction");
                         if(subscribedAuction!=null)
                         if(subscribedAuction == (transaction as EndOfAuctionTransaction).AuctionItemId)
                         { 

@@ -45,7 +45,7 @@ namespace AuctionServer{
                 var message = (sender as AuctionServerNewTransaction);
                 if(message.Transaction != null)
                 {
-                    PrefixedWriter.WriteLineImprtant("new transaction received");
+                    PrefixedWriter.WriteLineImprtant($"New transaction received id - {message.Transaction.TID}, auction id - {message.Transaction.AuctionItemId}");
                     // kontrola transakce viz ClientNode metoda NewTransactionReceived
                     if(message.Transaction is NewAuctionItemTransaction)
                     {
