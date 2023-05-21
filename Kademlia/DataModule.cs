@@ -56,9 +56,8 @@ namespace Kademlia
                         //Console.WriteLine($"saving block " + builder.ToString());
                         string transactionsText = "";
                         foreach(Transaction t in block.Transactions)
-                            transactionsText += t.TID + "\n";
-                        transactionsText = transactionsText.TrimEnd('\n');
-                        PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString() + "\nTransactions:\n" + transactionsText);
+                            transactionsText += "\t\t" + t.TID + "\n";
+                        PrefixedWriter.WriteLineImprtant($"saving block " + builder.ToString() + "\n\tTransactions in block ids:\n" + transactionsText);
                         Console.WriteLine($"---------------------------------------------------------------------------------");
                     }
                     else

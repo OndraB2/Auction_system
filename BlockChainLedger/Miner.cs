@@ -51,9 +51,8 @@ namespace BlockChainLedger
                 Node.SendStore(b);
                 string transactionsText = "";
                 foreach(Transaction t in transactions)
-                    transactionsText += t.TID + "\n";
-                transactionsText = transactionsText.TrimEnd('\n');
-                PrefixedWriter.WriteLineImprtant("Block send to validation " + b.ToString() + "\nTransactions:\n" + transactionsText);
+                    transactionsText += "\t\t" + t.TID + "\n";
+                PrefixedWriter.WriteLineImprtant("Block send to validation " + b.ToString() + "\n\tTransactions in block ids:\n" + transactionsText);
                 Console.WriteLine("Block send to validation ###################################################");
             }
 

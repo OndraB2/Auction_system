@@ -5,7 +5,7 @@ namespace Kademlia
     class RoutingTable
     {
         private List<KademliaNode> nodes = new List<KademliaNode>();
-        private const int BucketSize = 20;
+        private const int BucketSize = 100;
         private const int NumLevels = 160;
 
         public int NumberOfNodes {get; private set;} = 0;
